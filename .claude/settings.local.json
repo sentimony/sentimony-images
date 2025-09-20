@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Read(//Users/ihororlovskyi/Work/GitHub/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
