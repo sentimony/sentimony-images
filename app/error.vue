@@ -1,76 +1,50 @@
 <script setup lang="ts">
-const { error } = defineProps<{
-  error?: any
-}>()
+import { computed } from 'vue'
+import type { NuxtError } from '#app'
 
-useHead({
-  title: '404 - Page Not Found | Sentimony Records',
-  meta: [
-    { name: 'description', content: 'The page you are looking for could not be found.' }
-  ]
-})
+const props = defineProps<{ error: NuxtError }>()
+const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>'
+const isError = props.error?.error
 
 const handleError = () => clearError({ redirect: '/' })
+// const handleError = () => clearError()
+
+const pageTitle = computed(() => String(props.error?.statusCode ?? 'Error'))
+useHead({
+  title: pageTitle,
+  // Ensure our title formatting persists and does not get cleared
+  titleTemplate: (title?: string) => title ? `${title} · Sentimony Records` : 'Sentimony Records',
+  bodyAttrs: {
+    class: isError ? 'isError' : ''
+  }
+})
 </script>
 
 <template>
-  <div class="min-h-screen relative font-montserrat bg-gradient-to-br from-[#052e16] via-[#064e2a] to-[#065f32]">
-    <!-- Background overlay -->
-    <div class="fixed inset-0 bg-gradient-to-br from-[#052e16]/80 via-[#064e2a]/70 to-[#065f32]/80"></div>
-
-    <!-- Main content -->
-    <div class="relative z-10 flex items-center justify-center min-h-screen px-6">
-      <div class="text-center max-w-2xl mx-auto">
-        <!-- 404 Number -->
-        <h1 class="text-9xl md:text-[12rem] font-bold bg-gradient-to-r from-green-300 to-emerald-200 bg-clip-text text-transparent mb-8 font-julius-sans-one leading-none">
-          404
-        </h1>
-
-        <!-- Error message -->
-        <div class="mb-8">
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-            Lost in the Psychedelic Space
-          </h2>
-          <p class="text-xl text-green-100 leading-relaxed">
-            The page you're looking for has transcended to another dimension.
-            Let's guide you back to reality.
-          </p>
-        </div>
-
-        <!-- Error details -->
-        <div v-if="error" class="bg-black/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-green-500/20">
-          <p class="text-green-300 font-semibold mb-2">Error Details:</p>
-          <p class="text-gray-300 font-mono text-sm">{{ error.statusMessage || 'Page not found' }}</p>
-        </div>
-
-        <!-- Action buttons -->
-        <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
-          <button
-            @click="handleError"
-            class="inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-white transition-all duration-300 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full hover:from-green-500 hover:to-emerald-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 transform w-full sm:w-auto"
-          >
-            <Icon name="heroicons:home" class="mr-2 text-xl" />
-            Back to Home
-          </button>
-
-          <NuxtLink
-            to="/"
-            class="inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-green-300 transition-all duration-300 border-2 border-green-500 rounded-full hover:bg-green-500 hover:text-white transform w-full sm:w-auto"
-          >
-            <Icon name="heroicons:arrow-left" class="mr-2 text-xl" />
-            Navigate Home
-          </NuxtLink>
-        </div>
-
-        <!-- API status -->
-        <div class="mt-12 bg-black/20 backdrop-blur-sm rounded-xl p-6 border border-green-500/20">
-          <h3 class="text-lg font-bold text-green-300 mb-3">Images API Still Working</h3>
-          <p class="text-gray-300 text-sm mb-3">Try accessing an image:</p>
-          <div class="bg-gray-900/50 rounded p-2 font-mono text-xs text-emerald-400 break-all">
-            /.netlify/functions/image?f=your-image.jpg&w=300&h=200&q=80
-          </div>
-        </div>
-      </div>
+  <div class="max-w-sm min-h-screen flex flex-col justify-center mx-auto px-2 text-center text-white ">
+    <div class="text-2xl md:text-4xl my-4 md:my-6">{{ error?.statusCode }}</div>
+    <div class="mb-6">{{ error?.statusMessage }}</div>
+    <div>
+      <button
+        @click="handleError"
+        class="transition-background ease-in-out duration-300 inline-flex items-center h-[36px] md:h-[42px] text-[12px] md:text-[15px] tracking-tighter rounded-md border hover:bg-white/30 px-3 md:px-4 mb-2 mr-2 last:mr-0 shadow-[0_2px_10px_0_rgba(0,0,0,0.5)] backdrop-blur-sm"
+        v-wave
+      >
+        <span class="mr-2" v-if="svg" v-html="svg"></span>
+        <span>Go Home</span>
+      </button>
     </div>
   </div>
 </template>
+
+<style>
+body.isError {
+  @apply
+  font-Montserrat
+  /* font-[inherit] */
+  /* bg-[url('https://content.sentimony.com/assets/img/backgrounds/trees-green_v5.jpg?01')] */
+  /* bg-[url('https://firebasestorage.googleapis.com/v0/b/sentimony-db.appspot.com/o/backgrounds%2Ftrees-green_v5-sm.webp?alt=media&token=46b43e97-4b63-4b09-a35e-fca9535c0d12')] */
+  /* bg-[url('https://firebasestorage.googleapis.com/v0/b/sentimony-db.appspot.com/o/backgrounds%2Ftrees-green_v5-lg.webp?alt=media&token=8482e0e2-dd3c-445c-8082-9c11b416b326')] */
+  bg-gradient-to-br from-[#052e16] via-[#064e2a] to-[#065f32]
+}
+</style>

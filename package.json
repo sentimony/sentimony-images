@@ -1,24 +1,27 @@
 {
-  "name": "nuxt-app",
-  "type": "module",
+  "name": "sentimony-images",
   "private": true,
+  "type": "module",
+  "dependencies": {
+    "v-wave": "^3.0.4"
+  },
+  "devDependencies": {
+    "nuxt": "^4.1.2",
+    "@nuxt/icon": "^2.0.0",
+    "@nuxt/image": "^1.11.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
+    "@nuxtjs/tailwindcss": "^6.14.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "netlify:dev": "netlify dev"
+    "preinstall": "node -e \"console.log('npm_config_production=', process.env.npm_config_production)\""
   },
-  "dependencies": {
-    "@netlify/functions": "^4.2.5",
-    "nuxt": "^4.1.2",
-    "vue": "^3.5.21",
-    "vue-router": "^4.5.1"
-  },
-  "devDependencies": {
-    "@nuxt/icon": "^2.0.0",
-    "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/tailwindcss": "^6.14.0"
+  "engines": {
+    "node": "22.19.0",
+    "npm": "10.9.3"
   }
 }

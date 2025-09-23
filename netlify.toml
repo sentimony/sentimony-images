@@ -3,6 +3,74 @@
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
 
+# [[plugins]]
+#   package = "@netlify/plugin-lighthouse"
+
+[functions]
+  node_bundler = "esbuild"
+
+# блокування будь-яких варіантів з ".php" незалежно від регістру
 [[edge_functions]]
-  function = "block-rules"
-  path = "/*"
+  pattern = "/.*\\.[Pp][Hh][Pp].*"
+  function = "blocking"
+
+# будь-де є "wp-"
+[[edge_functions]]
+  pattern  = "/.*[Ww][Pp]-.*"
+  function = "blocking"
+
+# будь-де є "wp/"
+[[edge_functions]]
+  pattern  = "/.*[Ww][Pp]/.*"
+  function = "blocking"
+
+# будь-де є "wordpress"
+[[edge_functions]]
+  pattern  = "/.*[Ww][Oo][Rr][Dd][Pp][Rr][Ee][Ss][Ss].*"
+  function = "blocking"
+
+# Test: https://stage--sentimony-content.netlify.app/__test.PHP
+# Test: https://stage--sentimony-content.netlify.app/__test.Php7
+# Test: https://stage--sentimony-content.netlify.app/__testwP-
+# Test: https://stage--sentimony-content.netlify.app/__testWp/
+# Test: https://stage--sentimony-content.netlify.app/__testwoRdpress
+
+# Редиректи зображень (вищий пріоритет)
+[[edge_functions]]
+  pattern  = "/.*/micro.*\\.jpg.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern  = "/.*/small.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern  = "/.*/medium.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern  = "/.*/og-images/.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern  = "/.*/large/.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern = "/releases/.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern  = "/.*\\.jpg\\).*"
+  function = "redirects"
+
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/micro/va-gatekey-vol-2.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/micro-retina/shizolizer-gin.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/small/va-gatekey-vol-2.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/small-retina/shizolizer-gin.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/medium/va-gatekey-vol-2.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/medium-retina/shizolizer-gin.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/og-image/shizolizer-gin.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/large/va-gatekey-vol-2.jpg
+# Test: https://stage--sentimony-content.netlify.app/releases/boketto-pushback_th.jpg
+# !Test: https://stage--sentimony-content.netlify.app/assets/img/backgrounds/sombrero-red.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_1x.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_2x.jpg

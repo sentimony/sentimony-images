@@ -1,0 +1,37 @@
+# Releases thumbnails - старі розміри на нові _th.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/micro/va-gatekey-vol-2.jpg
+; /assets/img/releases/micro/*.jpg          /assets/img/releases/:splat_th.jpg    301
+; /assets/img/releases/micro-retina/*.jpg   /assets/img/releases/:splat_th.jpg    301
+; /assets/img/releases/small/*.jpg          /assets/img/releases/:splat_th.jpg    301
+; /assets/img/releases/small-retina/*.jpg   /assets/img/releases/:splat_th.jpg    301
+; /assets/img/releases/medium/*.jpg         /assets/img/releases/:splat_th.jpg    301
+; /assets/img/releases/medium-retina/*.jpg  /assets/img/releases/:splat_th.jpg    301
+
+# Releases OG images - старі og-image на нові _og.jpg
+; /assets/img/releases/og-image/*.jpg       /assets/img/releases/:splat_og.jpg    301
+
+# Releases large images - старі large на нові _xl.jpg
+; /assets/img/releases/large/*.jpg          /assets/img/releases/:splat_xl.jpg    301
+
+# Artists thumbnails - старі розміри на нові -01_th.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/micro/shizolizer-gin.jpg
+; /assets/img/artists/micro/*.jpg           /assets/img/artists/:splat-01_th.jpg  301
+; /assets/img/artists/micro-retina/*.jpg    /assets/img/artists/:splat-01_th.jpg  301
+; /assets/img/artists/small/*.jpg           /assets/img/artists/:splat-01_th.jpg  301
+; /assets/img/artists/small-retina/*.jpg    /assets/img/artists/:splat-01_th.jpg  301
+; /assets/img/artists/medium/*.jpg          /assets/img/artists/:splat-01_th.jpg  301
+; /assets/img/artists/medium-retina/*.jpg   /assets/img/artists/:splat-01_th.jpg  301
+
+# Artists OG images - старі og-image на нові -01_og.jpg
+; /assets/img/artists/og-image/*.jpg        /assets/img/artists/:splat-01_og.jpg  301
+
+# Artists large images - старі large на нові -01_xl.jpg
+; /assets/img/artists/large/*.jpg           /assets/img/artists/:splat-01_xl.jpg  301
+
+# Generic releases redirect - загальний редирект для /releases/ (має бути останнім)
+# Test: https://stage--sentimony-content.netlify.app/releases/boketto-pushback_th.jpg
+; /releases/*                               /assets/img/releases/:splat           301
+
+# Background images - виправлення некоректних URL з CSS кодом
+# Test: https://stage--sentimony-content.netlify.app/assets/img/backgrounds/sombrero-red.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_1x.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_2x.jpg
+; /assets/img/backgrounds/sombrero-red.jpg*     /assets/img/backgrounds/sombrero-red.jpg  301
