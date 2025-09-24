@@ -22,9 +22,9 @@ export default async (request: Request) => {
     }
   }
 
-  // Releases OG images - старі og-image на нові _og.jpg
-  if (/^\/assets\/img\/releases\/og-image\/(.+)\.jpg$/.test(path)) {
-    const match = path.match(/^\/assets\/img\/releases\/og-image\/(.+)\.jpg$/);
+  // Releases OG images - старі og-images на нові _og.jpg
+  if (/^\/assets\/img\/releases\/og-images\/(.+)\.jpg$/.test(path)) {
+    const match = path.match(/^\/assets\/img\/releases\/og-images\/(.+)\.jpg$/);
     if (match) {
       const filename = match[1];
       const newPath = `/assets/img/releases/${filename}_og.jpg`;
@@ -55,9 +55,9 @@ export default async (request: Request) => {
     }
   }
 
-  // Artists OG images - старі og-image на нові -01_og.jpg
-  if (/^\/assets\/img\/artists\/og-image\/(.+)\.jpg$/.test(path)) {
-    const match = path.match(/^\/assets\/img\/artists\/og-image\/(.+)\.jpg$/);
+  // Artists OG images - старі og-images на нові -01_og.jpg
+  if (/^\/assets\/img\/artists\/og-images\/(.+)\.jpg$/.test(path)) {
+    const match = path.match(/^\/assets\/img\/artists\/og-images\/(.+)\.jpg$/);
     if (match) {
       const filename = match[1];
       const newPath = `/assets/img/artists/${filename}-01_og.jpg`;
@@ -76,6 +76,17 @@ export default async (request: Request) => {
       return Response.redirect(`${url.origin}${newPath}`, 301);
     }
   }
+
+  // Playlists OG images - старі og-images на нові -_og.jpg
+  // if (/^\/assets\/img\/playlists\/og-images\/(.+)\.jpg$/.test(path)) {
+  //   const match = path.match(/^\/assets\/img\/playlists\/og-images\/(.+)\.jpg$/);
+  //   if (match) {
+  //     const filename = match[1];
+  //     const newPath = `/assets/img/playlists/${filename}_og.jpg`;
+  //     console.log(`${gray}${ip} => ${magenta}${path} => ${green}${newPath}${reset}`);
+  //     return Response.redirect(`${url.origin}${newPath}`, 301);
+  //   }
+  // }
 
   // Generic releases redirect - загальний редирект для /releases/ (тільки якщо починається)
   if (path.startsWith('/releases/')) {

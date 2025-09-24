@@ -2,7 +2,7 @@
 useHead({
   title: 'Digital Keeper · Sentimony Records',
   meta: [
-    { name: 'description', content: 'Digital Keeper is a repo for storing content files of Sentimony Records, a psychedelic music label. Label keeps here artworks of releases, merch images, event fyers, artists photo, music video covers, logotypes versions, svg icons, website backgrounds.' }
+    { name: 'description', content: 'Digital Keeper is a repository for storing content files of Sentimony Records, a psychedelic music label. Label keeps here artworks of releases, merch images, event fyers, artists photo, music video covers, logotypes versions, svg icons, website backgrounds.' }
   ]
 })
 
@@ -49,9 +49,9 @@ useHead({
       </a>
 
       <div class="text-left text-white mt-16 mb-8 indent-5 max-w-xl [&>p]:mb-4 [&>p>a]:text-green-500 hover:[&>p>a]:text-green-700">
-        <p>Hi, you are at the home page of "Digital Keeper" - a repo for storing content files of Sentimony Records, a psychedelic music label..</p>
+        <p>Hi, you are at the home page of "Digital Keeper" - a repository for storing content files of Sentimony Records, a psychedelic music label.</p>
         <p>Label keeps here artworks of releases, merch images, event fyers, artists photo, music video covers, logotypes versions, svg icons, website backgrounds.</p>
-        <p>Developed on JAMstack architecture using Nuxt, Netlify, Tailwind. The repository is open, you can check the code on <a href="https://github.com/sentimony/digital-keeper" class="text-blue-500 underline">GitHub</a>.</p>
+        <p>Developed on JAMstack architecture using Nuxt, Netlify, Tailwind. The code is open, you can check the code on <a href="https://github.com/sentimony/digital-keeper" class="text-blue-500 underline">GitHub</a>.</p>
         <p>And if you are interested in web development, like me, feel free to leave your feedback, or ask a question, or create an issue. I will definitely pay attention to it.</p>
         <p>Have fun ;)</p>
       </div>

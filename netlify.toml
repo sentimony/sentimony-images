@@ -41,23 +41,23 @@
   function = "redirects"
 
 [[edge_functions]]
-  pattern  = "/.*/small.*"
+  pattern  = "/.*/small.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
-  pattern  = "/.*/medium.*"
+  pattern  = "/.*/medium.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
-  pattern  = "/.*/og-images/.*"
+  pattern  = "/.*/og-images/.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
-  pattern  = "/.*/large/.*"
+  pattern  = "/.*/large/.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
-  pattern = "/releases/.*"
+  pattern = "/releases/.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
@@ -70,7 +70,7 @@
 # Test: https://stage--sentimony-content.netlify.app/assets/img/artists/small-retina/shizolizer-gin.jpg
 # Test: https://stage--sentimony-content.netlify.app/assets/img/releases/medium/va-gatekey-vol-2.jpg
 # Test: https://stage--sentimony-content.netlify.app/assets/img/artists/medium-retina/shizolizer-gin.jpg
-# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/og-image/shizolizer-gin.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/artists/og-images/shizolizer-gin.jpg
 # Test: https://stage--sentimony-content.netlify.app/assets/img/releases/large/va-gatekey-vol-2.jpg
 # Test: https://stage--sentimony-content.netlify.app/releases/boketto-pushback_th.jpg
 # !Test: https://stage--sentimony-content.netlify.app/assets/img/backgrounds/sombrero-red.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_1x.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_2x.jpg

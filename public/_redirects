@@ -1,1 +1,5 @@
-# Clean redirects
+/assets/img/playlists/og-images/sentimony-official.jpg /assets/img/playlists/official_og.jpg 301
+/assets/img/playlists/og-images/dark-prog-zenonesque.jpg /assets/img/playlists/darkprog_og.jpg 301
+/assets/img/playlists/dark-prog-zenonesque-01_xl.jpg /assets/img/playlists/darkprog_og.jpg 301
+/assets/img/playlists/og-images/psychill-psybient.jpg /assets/img/playlists/psychill_og.jpg 301
+/assets/img/playlists/og-images/goa-trance.jpg /assets/img/playlists/goa_og.jpg 301
