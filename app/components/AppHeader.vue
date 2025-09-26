@@ -18,6 +18,14 @@
     >
       SVG Icons
     </NuxtLink>
+    <NuxtLink
+      to="/releases"
+      class="transition-[background-color] ease-in-out duration-300 text-white text-[16px] hover:bg-white/30 sm:px-2 md:px-3 lg:px-4 h-[56px] flex items-center justify-center rounded-[2px]"
+      :class="{ 'bg-white/10': $route.path === '/releases' }"
+      v-wave
+    >
+      Releases
+    </NuxtLink>
   </div>
 </template>
 

@@ -9,22 +9,18 @@
 [functions]
   node_bundler = "esbuild"
 
-# блокування будь-яких варіантів з ".php" незалежно від регістру
 [[edge_functions]]
   pattern = "/.*\\.[Pp][Hh][Pp].*"
   function = "blocking"
 
-# будь-де є "wp-"
 [[edge_functions]]
   pattern  = "/.*[Ww][Pp]-.*"
   function = "blocking"
 
-# будь-де є "wp/"
 [[edge_functions]]
   pattern  = "/.*[Ww][Pp]/.*"
   function = "blocking"
 
-# будь-де є "wordpress"
 [[edge_functions]]
   pattern  = "/.*[Ww][Oo][Rr][Dd][Pp][Rr][Ee][Ss][Ss].*"
   function = "blocking"
