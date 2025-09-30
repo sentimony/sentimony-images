@@ -88,12 +88,34 @@ export default async (request: Request) => {
   //   }
   // }
 
+  // Releases sencd redirect - /assets/img/releases/sencd036/filename.jpg → /assets/img/releases/filename.jpg
+  if (/^\/assets\/img\/releases\/sencd\d+\/(.+\.jpg)$/.test(path)) {
+    const match = path.match(/^\/assets\/img\/releases\/sencd\d+\/(.+\.jpg)$/);
+    if (match) {
+      const filename = match[1];
+      const newPath = `/assets/img/releases/${filename}`;
+      console.log(`${gray}${ip} => ${magenta}${path} => ${green}${newPath}${reset}`);
+      return Response.redirect(`${url.origin}${newPath}`, 301);
+    }
+  }
+
   // Generic releases redirect - загальний редирект для /releases/ (тільки якщо починається)
   if (path.startsWith('/releases/')) {
     const filename = path.substring('/releases/'.length);
     const newPath = `/assets/img/releases/${filename}`;
     console.log(`${gray}${ip} => ${magenta}${path} => ${green}${newPath}${reset}`);
     return Response.redirect(`${url.origin}${newPath}`, 301);
+  }
+
+  // Artists OG images - /artists/og-images/<artist>.jpg → /assets/img/artists/<artist>-01_og.jpg
+  if (/^\/artists\/og-images\/(.+)\.jpg$/.test(path)) {
+    const match = path.match(/^\/artists\/og-images\/(.+)\.jpg$/);
+    if (match) {
+      const artistName = match[1];
+      const newPath = `/assets/img/artists/${artistName}-01_og.jpg`;
+      console.log(`${gray}${ip} => ${magenta}${path} => ${green}${newPath}${reset}`);
+      return Response.redirect(`${url.origin}${newPath}`, 301);
+    }
   }
 
   // Загальна умова: якщо після .jpg є символ ) - прибираємо все що після .jpg

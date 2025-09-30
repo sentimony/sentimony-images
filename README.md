@@ -6,8 +6,8 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 
 ### Used:
 * [Nuxt](https://nuxt.com)
-* [Netlify](https://www.netlify.com)
-* [Tailwind](https://v3.tailwindcss.com)
+* [Netlify](https://netlify.com)
+* [Tailwind](https://tailwindcss.com)
 * [Iconify](https://icon-sets.iconify.design)
 
 ### Links:
@@ -32,7 +32,7 @@ npm run dev
 ### Deploy
 
 ```bash
-netlify deploy --alias stage --build
+netlify deploy --alias stage --context deploy-preview
 
 
 netlify deploy --prod

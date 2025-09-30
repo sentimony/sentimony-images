@@ -3,8 +3,8 @@
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
 
-# [[plugins]]
-#   package = "@netlify/plugin-lighthouse"
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
 
 [functions]
   node_bundler = "esbuild"
@@ -25,11 +25,29 @@
   pattern  = "/.*[Ww][Oo][Rr][Dd][Pp][Rr][Ee][Ss][Ss].*"
   function = "blocking"
 
+[[edge_functions]]
+  pattern  = ".*/([Aa]dmin|files|uploads)/.*"
+  function = "blocking"
+
 # Test: https://stage--sentimony-content.netlify.app/__test.PHP
 # Test: https://stage--sentimony-content.netlify.app/__test.Php7
 # Test: https://stage--sentimony-content.netlify.app/__testwP-
 # Test: https://stage--sentimony-content.netlify.app/__testWp/
 # Test: https://stage--sentimony-content.netlify.app/__testwoRdpress
+# Test: https://stage--sentimony-content.netlify.app/admin/controller/extension/extension/
+# Test: https://stage--sentimony-content.netlify.app/files/
+# Test: https://stage--sentimony-content.netlify.app/uploads/
+
+[[edge_functions]]
+  pattern = ".*/$"
+  function = "remove-trailing-slash"
+
+# Test: https://stage--sentimony-content.netlify.app/svg-icons
+# Test: https://stage--sentimony-content.netlify.app/svg-icons/
+# Test: https://stage--sentimony-content.netlify.app/artists
+# Test: https://stage--sentimony-content.netlify.app/artists/
+# Test: https://stage--sentimony-content.netlify.app/robots.txt
+# Test: https://stage--sentimony-content.netlify.app/sitemap.xml
 
 # Редиректи зображень (вищий пріоритет)
 [[edge_functions]]
@@ -53,7 +71,15 @@
   function = "redirects"
 
 [[edge_functions]]
+  pattern  = "/assets/img/releases/sencd.*\\.jpg.*"
+  function = "redirects"
+
+[[edge_functions]]
   pattern = "/releases/.*\\.jpg.*"
+  function = "redirects"
+
+[[edge_functions]]
+  pattern = "/artists/.*\\.jpg.*"
   function = "redirects"
 
 [[edge_functions]]
@@ -69,4 +95,13 @@
 # Test: https://stage--sentimony-content.netlify.app/assets/img/artists/og-images/shizolizer-gin.jpg
 # Test: https://stage--sentimony-content.netlify.app/assets/img/releases/large/va-gatekey-vol-2.jpg
 # Test: https://stage--sentimony-content.netlify.app/releases/boketto-pushback_th.jpg
-# !Test: https://stage--sentimony-content.netlify.app/assets/img/backgrounds/sombrero-red.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_1x.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_2x.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/backgrounds/sombrero-red.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_1x.jpg);background-image:url(https://content.sentimony.com/assets/img/backgrounds/sombrero-red_2x.jpg
+# Test: https://stage--sentimony-content.netlify.app/artists/og-images/kauyumari.jpg
+# Test: https://stage--sentimony-content.netlify.app/artists/og-images/eleexr.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/sencd036/unusual-cosmic-process-brain-channel_og.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/sencd017/senzar-before-the-morning-sun_th.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/sencd003/sphingida-origin_xl.jpg
+# Test: https://stage--sentimony-content.netlify.app/artrama-01_th.jpg
+# Test: https://stage--sentimony-content.netlify.app/aesthesia-01_th.jpg
+# Test: https://stage--sentimony-content.netlify.app/akhos-01_th.jpg
+# Test: https://stage--sentimony-content.netlify.app/assets/img/releases/astrocat-01_th.jpg

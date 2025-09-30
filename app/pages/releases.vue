@@ -120,23 +120,13 @@ const releaseImages = [
         <p>Digital Keeper storing Release Images on this page. All this Release Images used on portfolio website of Sentimony Records, a psychedelic music label.</p>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-16 max-w-6xl">
-        <a
+      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+        <Item
           v-for="image in releaseImages"
           :key="image"
-          :href="`/assets/img/releases/${image.replace('_th.jpg', '_xl.jpg')}`"
-          target="_blank"
-          class="flex flex-col items-center p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-        >
-          <img
-            :src="`/assets/img/releases/${image}`"
-            :alt="image.replace('_th.jpg', '')"
-            class="w-24 h-24 mb-3 object-cover rounded"
-          />
-          <span class="text-white text-xs text-center break-all">
-            {{ image.replace('_th', '') }}
-          </span>
-        </a>
+          :image="image"
+          folder="releases"
+        />
       </div>
 
     </div>
