@@ -2,6 +2,7 @@
 const menuItems = [
   { path: '/', label: 'Home' },
   { path: '/releases', label: 'Releases' },
+  { path: '/events', label: 'Events' },
   { path: '/artists', label: 'Artists' },
   { path: '/playlists', label: 'Playlists' },
   { path: '/videos', label: 'Videos' },
