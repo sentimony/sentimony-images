@@ -2,10 +2,11 @@
 const menuItems = [
   { path: '/', label: 'Home' },
   { path: '/releases', label: 'Releases' },
-  { path: '/events', label: 'Events' },
   { path: '/artists', label: 'Artists' },
   { path: '/playlists', label: 'Playlists' },
   { path: '/videos', label: 'Videos' },
+  { path: '/events', label: 'Events' },
+  { path: '/backgrounds', label: 'Backgrounds' },
   { path: '/svg-icons', label: 'SVG Icons' },
   { path: '/svg-images', label: 'SVG Images' },
 ]

@@ -49,7 +49,6 @@
 # Test: https://stage--sentimony-content.netlify.app/robots.txt
 # Test: https://stage--sentimony-content.netlify.app/sitemap.xml
 
-# Редиректи зображень (вищий пріоритет)
 [[edge_functions]]
   pattern  = "/.*/micro.*\\.jpg.*"
   function = "redirects"
