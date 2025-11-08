@@ -26,6 +26,7 @@ const releaseImages = [
   'frog-prog-triangulum_th.jpg',
   'from-vacuum-banglich_th.jpg',
   'from-vacuum-good-steps_th.jpg',
+  'gaz-mask-12-years_th.jpg',
   'gaz-mask-quetzalcoatl_th.jpg',
   'gaz-mask-trippy-valley_th.jpg',
   'gojja-amber-current_th.jpg',
