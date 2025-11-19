@@ -26,7 +26,7 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 ```bash
 npm i
 
-npm run dev
+npm run dev -- --host 0.0.0.0
 ```
 
 ### Deploy

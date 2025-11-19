@@ -14,12 +14,6 @@ useHead({
 //     })
 //   }
 // })
-
-// defineOgImageComponent('Sentimony', {
-//   headline: 'Sentimony Records',
-//   title: 'Psychedelic Music Label',
-//   description: 'Digital Keeper is a repository for storing content files of Sentimony Records, a psychedelic music label.',
-// })
 </script>
 
 

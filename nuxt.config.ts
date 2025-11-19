@@ -36,7 +36,6 @@ export default defineNuxtConfig({
     'v-wave/nuxt',
     '@nuxtjs/robots',
     '@nuxtjs/sitemap',
-    'nuxt-og-image',
   ],
   googleFonts: {
     families: {
@@ -66,12 +65,5 @@ export default defineNuxtConfig({
     autoLastmod: true,
     discoverImages: false,
     discoverVideos: false,
-  },
-  ogImage: {
-    enabled: true,
-    fonts: [
-      'Inter:400',
-      'Inter:700'
-    ]
   },
 })
