@@ -105,7 +105,7 @@ const releaseImages = [
   'vorg-cyber-soul-day_th.jpg', // 2025-06-27
   'syned-brain-dementor-mysterium-tremendum_th.jpg', // 2025-07-25
   'gaz-mask-12-years_th.jpg', // 2025-12-05
-  'vorg-cyber-soul-chill_th.jpg' // 2026-01-02
+  'vorg-cyber-soul-chill_th.jpg' // 2026-01-02 NOT RELEASED YET
 ]
 </script>
 
