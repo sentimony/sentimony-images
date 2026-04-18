@@ -19,6 +19,9 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify'
   },
+  experimental: {
+    payloadExtraction: false,
+  },
   ssr: true,
   routeRules: {
     '/': { isr: 86400 },

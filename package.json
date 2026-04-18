@@ -2,29 +2,31 @@
   "name": "sentimony-images",
   "private": true,
   "type": "module",
-  "dependencies": {
-    "@nuxt/icon": "^2.1.1",
-    "@nuxt/image": "^2.0.0",
-    "@nuxtjs/tailwindcss": "^6.14.0",
-    "v-wave": "^3.0.4"
-  },
-  "devDependencies": {
-    "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/robots": "^5.6.7",
-    "@nuxtjs/sitemap": "^7.5.0",
-    "@types/node": "^25.0.3",
-    "nuxt": "^4.2.2"
-  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "preinstall": "node -e \"console.log('npm_config_production=', process.env.npm_config_production)\""
+    "netlify:deploy:stage": "netlify deploy --alias stage --context deploy-preview",
+    "netlify:deploy:prod": "netlify deploy --prod"
+  },
+  "devDependencies": {
+    "netlify-cli": "^25.0.1"
+  },
+  "dependencies": {
+    "@nuxt/icon": "^2.2.1",
+    "@nuxt/image": "^2.0.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
+    "@nuxtjs/robots": "^6.0.7",
+    "@nuxtjs/sitemap": "^8.0.13",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/node": "^25.6.0",
+    "nuxt": "^4.4.2",
+    "v-wave": "^3.0.4"
   },
   "engines": {
-    "node": "24.11.1",
-    "npm": "11.6.2"
+    "node": "24.15.0",
+    "npm": "11.12.1"
   }
 }

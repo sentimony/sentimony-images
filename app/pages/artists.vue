@@ -212,6 +212,7 @@ const artistImages = [
   // 'hypogeo',
 
   // 2019-05-31 psydewise-radio-dystopia
+  // 'sam-wise',
 
   // 2019-06-28 artech-stringer-mode
   // 'artech',
