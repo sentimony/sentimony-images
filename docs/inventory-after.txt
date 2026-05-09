@@ -1,0 +1,7 @@
+th_count: 0
+th_size_kb: 0
+og_count: 223
+og_size_kb: 20480
+repo_size: 658M
+timestamp: 2026-05-09T21:59:30Z
+delta: th -5200 KB (5.2 MB), og -21784 KB (21.3 MB), repo -271 MB (du -sh excluding dist/.netlify/.nuxt; ≥15 MB DoD met)
