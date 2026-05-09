@@ -1,7 +1,7 @@
 ---
-title: sentimony-images — `_th.jpg` removal + `_og.jpg` optimization
+title: sentimony-images — `_th.jpg` cleanup + `_og.jpg` optimization + reverse sort order
 date: 2026-05-09
-scope: storage cleanup after task 03 (NuxtImg + Netlify Image CDN now generates thumbnails on-the-fly)
+scope: storage cleanup after task 03 (NuxtImg + Netlify Image CDN); plus reverse sort order on releases and artists pages (newest first)
 out_of_scope: [migrating originals to a new pipeline, format conversion to WebP/AVIF for source]
 ---
 
@@ -32,8 +32,10 @@ Before task 03 (sentimony-nuxt → NuxtImg), the site loaded pre-generated `_th.
 4. Pre-flight audit: `grep -rE "_th\\.jpg" sentimony-nuxt/app/` returns 0 (run from a sibling clone)
 5. Total repo size on disk reduced by ≥ 15 MB vs pre-cleanup
 6. README.md updated with new image strategy explanation
-7. All commits pushed to variant branch (`task4/A` or `task4/B`)
-8. Claude explicitly signals "task complete"
+7. **In `releases.vue` and `artists.vue`: first array entry has the most recent date (year ≥ 2024 expected); last entry has earliest (≤ 2010)** — i.e., array reads newest → oldest
+8. `pnpm build` exits 0 after sort reversal (no broken refs)
+9. All commits pushed to variant branch (`task4/A` or `task4/B`)
+10. Claude explicitly signals "task complete"
 
 ## Glossary
 
@@ -145,18 +147,48 @@ Before task 03 (sentimony-nuxt → NuxtImg), the site loaded pre-generated `_th.
 
 ---
 
-### Task 07 — Verify and final report
+### Task 07 — Reverse sort order in `releases.vue` and `artists.vue`
 
-**Goal:** confirm the savings.
+**Goal:** flip the hardcoded image arrays so newest entries appear first (currently sorted oldest → newest).
+
+**Context:** the arrays `releaseImages` (99 entries) in `app/pages/releases.vue` and `artistImages` (100 entries) in `app/pages/artists.vue` carry inline date comments like `// 2007-02-09`. Currently the first entry is from 2007; user wants the first entry to be from the most recent year.
+
+**Steps:**
+1. In `app/pages/releases.vue`: append `.reverse()` to the array literal:
+   ```ts
+   const releaseImages = [
+     'va-fantazma_th.jpg', // 2007-02-09
+     ...
+     'most-recent_th.jpg', // 2024-XX-XX
+   ].reverse()
+   ```
+   Single character change preserves date-comment ordering for future maintenance — humans still see chronological order in source, but UI renders reverse.
+2. Same for `app/pages/artists.vue` `artistImages` array.
+3. Other pages (`events.vue`, `videos.vue`, `playlists.vue`, `backgrounds.vue`, `svg-icons.vue`, `svg-images.vue`) — these have no date-based sort to reverse. Leave them.
+
+**Test:** `tests/sort-order.test.ts`:
+- import the arrays (or read the page files as text and parse)
+- assert `releaseImages[0]` corresponds to a date comment with year ≥ 2020
+- assert `releaseImages[releaseImages.length - 1]` corresponds to a date comment with year ≤ 2010
+- same checks for `artistImages`
+
+**Commit:** `feat(sort): reverse releases and artists order — newest first`
+
+---
+
+### Task 08 — Verify and final report
+
+**Goal:** confirm the savings + sort change.
 
 **Steps:**
 1. `du -sh .` — record post-cleanup size
 2. Compute delta vs `/tmp/repo-size-before`
-3. Verify all DoD conditions one final time
+3. `pnpm build` — must succeed (catches any broken refs from sort changes too)
+4. Verify all DoD conditions one final time
 
 **Test:** `tests/final-savings.test.ts` — read both /tmp files, assert delta ≥ 15 MB.
 
-**Commit:** `chore: cleanup verified — total savings recorded`
+**Commit:** `chore: cleanup + sort verified — total savings recorded`
 
 ---
 
