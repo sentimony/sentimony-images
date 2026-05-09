@@ -37,4 +37,16 @@ npm run netlify:deploy:stage
 npm run netlify:deploy:prod
 ```
 
+### Image strategy
+
+- **Source `.jpg`** — canonical full-resolution originals under `public/assets/img/`. Never deleted, never re-encoded.
+- **`_th.jpg` thumbnails** — **not stored**. The consuming site (sentimony-nuxt) requests sizes on-the-fly via the **Netlify Image CDN** (`/.netlify/images?url=...&w=...`), which resizes from the source on demand. Do **not** re-introduce pre-generated `_th.jpg` files.
+- **`_og.jpg` Open Graph previews** — pre-generated at 1200×630 for social-share cards. Optimized to ≤200 KB (target ≤150 KB) with JPEG quality 80 (mozjpeg). When adding new OG images, run the optimizer:
+
+  ```bash
+  npm run optimize:og
+  ```
+
+  See [`scripts/optimize-og.mjs`](scripts/optimize-og.mjs). The script preserves dimensions and steps quality down (80→72→65→60) only if the result still exceeds the 200 KB hard cap.
+
 ### Have fun! ;)
