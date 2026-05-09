@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "netlify:deploy:stage": "netlify deploy --alias stage --context deploy-preview",
     "netlify:deploy:prod": "netlify deploy --prod",
-    "optimize:og": "node scripts/optimize-og.mjs"
+    "optimize:og": "node scripts/optimize-og.mjs",
+    "optimize:og:dry": "node scripts/optimize-og.mjs --dry-run"
   },
   "devDependencies": {
     "@types/node": "^25.6.2",
