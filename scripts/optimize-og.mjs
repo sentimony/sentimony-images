@@ -9,7 +9,8 @@ const ROOT = process.argv[2]
   : join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'assets', 'img')
 
 const TARGET_BYTES = 150 * 1024
-const QUALITY = 80
+const HARD_LIMIT_BYTES = 200 * 1024
+const QUALITY_LADDER = [80, 72, 65, 60]
 
 async function* walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true })
@@ -20,14 +21,23 @@ async function* walk(dir) {
   }
 }
 
+async function encodeAt(file, tmp, quality) {
+  await sharp(file).jpeg({ quality, mozjpeg: true }).toFile(tmp)
+  return (await stat(tmp)).size
+}
+
 async function optimizeOne(file) {
   const before = (await stat(file)).size
   const meta = await sharp(file).metadata()
   const tmp = file + '.tmp'
 
-  await sharp(file)
-    .jpeg({ quality: QUALITY, mozjpeg: true })
-    .toFile(tmp)
+  let chosenQuality = QUALITY_LADDER[0]
+  let after = await encodeAt(file, tmp, chosenQuality)
+
+  for (let i = 1; i < QUALITY_LADDER.length && after > HARD_LIMIT_BYTES; i++) {
+    chosenQuality = QUALITY_LADDER[i]
+    after = await encodeAt(file, tmp, chosenQuality)
+  }
 
   const tmpMeta = await sharp(tmp).metadata()
   if (tmpMeta.width !== meta.width || tmpMeta.height !== meta.height) {
@@ -35,13 +45,12 @@ async function optimizeOne(file) {
     throw new Error(`dimension drift on ${file}: ${meta.width}x${meta.height} -> ${tmpMeta.width}x${tmpMeta.height}`)
   }
 
-  const after = (await stat(tmp)).size
   if (after >= before) {
     await unlink(tmp)
-    return { file, before, after: before, skipped: true }
+    return { file, before, after: before, quality: chosenQuality, skipped: true }
   }
   await rename(tmp, file)
-  return { file, before, after, skipped: false }
+  return { file, before, after, quality: chosenQuality, skipped: false }
 }
 
 async function main() {
@@ -59,8 +68,8 @@ async function main() {
     if (r.skipped) skipped++
     if (r.after > TARGET_BYTES) oversized++
     const pct = r.before > 0 ? ((1 - r.after / r.before) * 100).toFixed(1) : '0.0'
-    const flag = r.after > TARGET_BYTES ? ' [over 150K]' : ''
-    const tag = r.skipped ? ' [skipped — already optimal]' : ''
+    const flag = r.after > HARD_LIMIT_BYTES ? ' [over 200K HARD]' : (r.after > TARGET_BYTES ? ' [over 150K]' : '')
+    const tag = r.skipped ? ' [skipped — already optimal]' : ` q=${r.quality}`
     console.log(`${r.file}  ${(r.before / 1024).toFixed(1)}K -> ${(r.after / 1024).toFixed(1)}K  (-${pct}%)${flag}${tag}`)
   }
 
