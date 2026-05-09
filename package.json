@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -12,21 +12,22 @@
     "netlify:deploy:prod": "netlify deploy --prod"
   },
   "devDependencies": {
-    "netlify-cli": "^25.0.1"
+    "@types/node": "^25.6.2",
+    "netlify-cli": "^26.0.1",
+    "skillio": "^0.1.5"
   },
   "dependencies": {
-    "@nuxt/icon": "^2.2.1",
+    "@nuxt/icon": "^2.2.2",
     "@nuxt/image": "^2.0.0",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/robots": "^6.0.7",
-    "@nuxtjs/sitemap": "^8.0.13",
+    "@nuxtjs/robots": "^6.0.8",
+    "@nuxtjs/sitemap": "^8.0.15",
     "@nuxtjs/tailwindcss": "^6.14.0",
-    "@types/node": "^25.6.0",
-    "nuxt": "^4.4.2",
+    "nuxt": "^4.4.4",
     "v-wave": "^3.0.4"
   },
   "engines": {
-    "node": "24.15.0",
-    "npm": "11.12.1"
+    "node": "v24.15.0",
+    "npm": "11.13.0"
   }
 }

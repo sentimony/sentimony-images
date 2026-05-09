@@ -17,7 +17,7 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 
 ### Monitoring
 
-* [Functions Logs](https://app.netlify.com/projects/sentimony-content/logs/functions/server) or `netlify logs:function server`
+* [Functions Logs](https://app.netlify.com/projects/sentimony-content/logs/functions/server)
 * [Edge Functions Logs](https://app.netlify.com/projects/sentimony-content/logs/edge-functions)
 * [Requests Left](https://app.netlify.com/projects/sentimony-content/configuration/functions#overview)
 
@@ -26,16 +26,15 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 ```bash
 npm i
 
-npm run dev -- --host 0.0.0.0
+npm run dev
 ```
 
 ### Deploy
 
 ```bash
-netlify deploy --alias stage --context deploy-preview
+npm run netlify:deploy:stage
 
-
-netlify deploy --prod
+npm run netlify:deploy:prod
 ```
 
 ### Have fun! ;)

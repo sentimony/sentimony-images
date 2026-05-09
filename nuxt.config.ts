@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const isDev = process.env.NODE_ENV === 'development' || !!process.env.URL?.includes('stage')
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -21,15 +23,21 @@ export default defineNuxtConfig({
   },
   experimental: {
     payloadExtraction: false,
+    serverAppConfig: false,
   },
   ssr: true,
+  // Incremental Static Regeneration for pages to reduce SSR load.
+  // Disabled in dev/stage: ISR payload caching causes ENOTDIR errors locally
+  // (unstorage writes "/" as a file "payload", then fails to create "payload/releases" dir).
   routeRules: {
-    '/': { isr: 86400 },
-    '/svg-icons': { isr: 86400 },
-    '/releases': { isr: 86400 },
-    '/artists': { isr: 86400 },
-    '/playlists': { isr: 86400 },
-    '/videos': { isr: 86400 },
+    ...(!isDev && {
+      '/': { isr: 86400 },
+      '/svg-icons': { isr: 86400 },
+      '/releases': { isr: 86400 },
+      '/artists': { isr: 86400 },
+      '/playlists': { isr: 86400 },
+      '/videos': { isr: 86400 },
+    }),
   },
   modules: [
     '@nuxtjs/tailwindcss',
@@ -68,5 +76,13 @@ export default defineNuxtConfig({
     autoLastmod: true,
     discoverImages: false,
     discoverVideos: false,
+  },
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+      ]
+    }
   },
 })
