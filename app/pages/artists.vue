@@ -446,7 +446,7 @@ const artistImages = [
   // 2025-09-01 va-gatekey-vol-3
 
   // 2026-01-02 vorg-cyber-soul-chill
-]
+].reverse()
 </script>
 
 <template>
