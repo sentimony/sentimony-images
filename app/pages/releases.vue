@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { RELEASE_SORT_OPTIONS, sortImages, useReleaseSort } from '~/composables/useImageSort'
+
 useHead({
   title: 'Releases · Digital Keeper',
   meta: [
     { name: 'description', content: 'Digital Keeper storing Release Images on this page. All this Release Images used on portfolio website of Sentimony Records, a psychedelic music label.' }
   ]
 })
+
+const { sortBy } = useReleaseSort()
 
 const releaseImages = [
   'va-fantazma_th.jpg', // 2007-02-09
@@ -105,13 +109,16 @@ const releaseImages = [
   'vorg-cyber-soul-day_th.jpg', // 2025-06-27
   'syned-brain-dementor-mysterium-tremendum_th.jpg', // 2025-07-25
   'gaz-mask-12-years_th.jpg', // 2025-12-05
-  'vorg-cyber-soul-chill_th.jpg' // 2026-01-02 NOT RELEASED YET
+  'vorg-cyber-soul-chill_th.jpg', // 2026-01-02 NOT RELEASED YET
+  'alien-immigrant-plant-medicine_th.jpg' // 2026-05-22 NOT RELEASED YET
 ]
+
+const sortedReleaseImages = computed(() => sortImages(releaseImages, sortBy.value))
 </script>
 
 <template>
   <div class="flex items-top justify-center">
-    <div class="text-center my-16 px-4">
+    <div class="text-center my-16 px-4 w-full max-w-[96rem]">
 
       <h1 class="text-5xl text-white mb-4 font-Julius tracking-widest uppercase">
         Releases
@@ -121,9 +128,13 @@ const releaseImages = [
         <p>Digital Keeper storing Release Images on this page. All this Release Images used on portfolio website of Sentimony Records, a psychedelic music label.</p>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+      <div class="flex justify-end mb-4">
+        <SortSelect v-model="sortBy" :options="RELEASE_SORT_OPTIONS" />
+      </div>
+
+      <div class="flex gap-4 justify-center flex-wrap mb-16">
         <Item
-          v-for="image in releaseImages"
+          v-for="image in sortedReleaseImages"
           :key="image"
           :image="image"
           folder="releases"

@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { ARTIST_SORT_OPTIONS, sortImages, useArtistSort } from '~/composables/useImageSort'
+
 useHead({
   title: 'Artists · Digital Keeper',
   meta: [
     { name: 'description', content: 'Digital Keeper storing Artist Images on this page. All this Artist Images used on portfolio website of Sentimony Records, a psychedelic music label.' }
   ]
 })
+
+const { sortBy } = useArtistSort()
 
 const artistImages = [
   // 2007-02-09 va-fantazma
@@ -446,12 +450,17 @@ const artistImages = [
   // 2025-09-01 va-gatekey-vol-3
 
   // 2026-01-02 vorg-cyber-soul-chill
+
+  // 2026-05-22 alien-immigrant-plant-medicine
+  'alien-immigrant-01_th.jpg',
 ]
+
+const sortedArtistImages = computed(() => sortImages(artistImages, sortBy.value))
 </script>
 
 <template>
   <div class="flex items-top justify-center">
-    <div class="text-center my-16 px-4">
+    <div class="text-center my-16 px-4 w-full max-w-[96rem]">
 
       <h1 class="text-5xl text-white mb-4 font-Julius tracking-widest uppercase">
         Artists
@@ -461,9 +470,13 @@ const artistImages = [
         <p>Digital Keeper storing Artist Images on this page. All this Artist Images used on portfolio website of Sentimony Records, a psychedelic music label.</p>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+      <div class="flex justify-end mb-4">
+        <SortSelect v-model="sortBy" :options="ARTIST_SORT_OPTIONS" />
+      </div>
+
+      <div class="flex gap-4 justify-center flex-wrap mb-16">
         <Item
-          v-for="image in artistImages"
+          v-for="image in sortedArtistImages"
           :key="image"
           :image="image"
           folder="artists"

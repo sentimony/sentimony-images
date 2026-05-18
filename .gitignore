@@ -1,11 +1,23 @@
 Thumbs.db
 .DS_Store
-.idea/
-.vscode/
-node_modules/
+
+/node_modules/
 *.log
-.nuxt/
-dist/
+/.nuxt/
+/.output/
+/dist/
+
+.env
+.env.local
+/.env/*
+!/.env/.env.example
+
 .netlify/
 !.netlify/state.json
-/.claude
+
+# /supabase/*
+# !/supabase/migrations
+
+/.agents/
+/.claude/
+# skills-lock.json

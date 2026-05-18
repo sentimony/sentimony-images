@@ -12,9 +12,8 @@
     "netlify:deploy:prod": "netlify deploy --prod"
   },
   "devDependencies": {
-    "@types/node": "^25.6.2",
-    "netlify-cli": "^26.0.1",
-    "skillio": "^0.1.5"
+    "@types/node": "^25.9.0",
+    "netlify-cli": "^26.0.2"
   },
   "dependencies": {
     "@nuxt/icon": "^2.2.2",
@@ -23,11 +22,11 @@
     "@nuxtjs/robots": "^6.0.8",
     "@nuxtjs/sitemap": "^8.0.15",
     "@nuxtjs/tailwindcss": "^6.14.0",
-    "nuxt": "^4.4.4",
+    "nuxt": "^4.4.6",
     "v-wave": "^3.0.4"
   },
   "engines": {
-    "node": "v24.15.0",
-    "npm": "11.13.0"
+    "node": ">=24.15.0",
+    "npm": ">=11.12.0"
   }
 }
