@@ -41,7 +41,7 @@
 /assets/img/backgrounds/sombrero-red@1x.jpg   /assets/img/backgrounds/sombrero-red_1x.jpg 301
 /assets/img/backgrounds/sombrero-red@2x.jpg   /assets/img/backgrounds/sombrero-red_2x.jpg 301
 
-# SPA fallback — serve the app for unknown routes (must stay last;
+# SPA fallback - serve the app for unknown routes (must stay last;
 # real files and the 301s above take priority over this rewrite).
 # Note: /sitemap.xml is retired via the "gone" edge function (410).
 /*  /index.html  200

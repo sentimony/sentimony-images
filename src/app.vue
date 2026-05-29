@@ -4,14 +4,14 @@ import AppHeader from '~/components/AppHeader.vue'
 import AppFooter from '~/components/AppFooter.vue'
 
 useHead({
-  titleTemplate: '%s · Sentimony Keeper',
+  titleTemplate: '%s · Digital Keeper',
 })
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col">
     <AppHeader />
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col">
       <RouterView />
     </main>
     <AppFooter />

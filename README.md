@@ -6,9 +6,14 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 
 ### Used:
 * [Vue](https://vuejs.org)
+* [Vue Router](https://router.vuejs.org)
 * [Vite](https://vite.dev)
-* [Netlify](https://netlify.com)
+* [TypeScript](https://www.typescriptlang.org)
 * [Tailwind](https://tailwindcss.com)
+* [Reka UI](https://reka-ui.com)
+* [shadcn-vue](https://www.shadcn-vue.com)
+* [Lucide](https://lucide.dev)
+* [Netlify](https://netlify.com)
 
 ### Links:
 

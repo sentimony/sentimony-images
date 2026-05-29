@@ -11,6 +11,7 @@ import {
   SelectItemIndicator,
   SelectItemText,
 } from 'reka-ui'
+import { ChevronDown, Check } from 'lucide-vue-next'
 import type { ImageSortOption } from '~/composables/useImageSort'
 
 interface SortOption {
@@ -34,9 +35,7 @@ const sortBy = defineModel<ImageSortOption>({ required: true })
     >
       <SelectValue />
       <SelectIcon class="text-white/70">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <ChevronDown class="size-3" :stroke-width="2" />
       </SelectIcon>
     </SelectTrigger>
 
@@ -55,9 +54,7 @@ const sortBy = defineModel<ImageSortOption>({ required: true })
           >
             <SelectItemText>{{ opt.label }}</SelectItemText>
             <SelectItemIndicator class="absolute right-2 inline-flex items-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
+              <Check class="size-3.5" :stroke-width="2" />
             </SelectItemIndicator>
           </SelectItem>
         </SelectViewport>

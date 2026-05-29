@@ -9,7 +9,7 @@
 [functions]
   node_bundler = "esbuild"
 
-# Sitemap retired with the Vite/SPA migration — return 410 Gone
+# Sitemap retired with the Vite/SPA migration - return 410 Gone
 [[edge_functions]]
   pattern = "/sitemap\\.xml"
   function = "gone"

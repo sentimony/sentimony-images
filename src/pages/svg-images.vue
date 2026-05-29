@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue'
 import SvgImageItem from '~/components/SvgImageItem.vue'
+import { PenTool } from 'lucide-vue-next'
 
 useHead({
-  title: 'SVG Images · Digital Keeper',
+  title: 'SVG Images',
   meta: [
-    { name: 'description', content: 'Digital Keeper storing SVG Images on this page. Collection of various SVG illustrations and graphics.' }
+    { name: 'description', content: 'A collection of hand-drawn vector illustrations: playful characters, nature scenes and mandalas created for Sentimony Records.' }
   ]
 })
 
@@ -27,12 +28,13 @@ const svgImages = [
   <div class="flex items-top justify-center">
     <div class="text-center my-16 px-4">
 
-      <h1 class="text-5xl text-white mb-4 font-Julius tracking-widest uppercase">
+      <h1 class="font-bold text-4xl text-white mb-4 font-Julius tracking-widest uppercase flex items-center justify-center gap-4">
+        <PenTool class="size-10 shrink-0" :stroke-width="2" />
         SVG Images
       </h1>
 
       <div class="text-left text-white mt-4 mb-16 indent-5 max-w-xl mx-auto [&>p]:mb-4">
-        <p>Digital Keeper storing SVG Images on this page. Collection of various SVG illustrations and graphics.</p>
+        <p>A collection of hand-drawn vector illustrations: playful characters, nature scenes and mandalas created for Sentimony Records.</p>
       </div>
 
       <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
