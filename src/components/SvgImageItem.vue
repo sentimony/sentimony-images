@@ -10,7 +10,7 @@ defineProps<Props>()
   <a
     :href="`/assets/img/svg-images/${image}`"
     target="_blank"
-    class="flex flex-col items-center p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+    class="flex flex-col items-center p-4 bg-white/5 backdrop-blur-xs rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
     v-wave
   >
     <img

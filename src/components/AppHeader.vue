@@ -13,7 +13,7 @@ const menuItems = [
 </script>
 
 <template>
-  <div class="sticky top-0 left-0 py-2 w-full z-10 border-b border-white/30 bg-white/5 backdrop-blur-sm flex justify-center flex-wrap items-center px-2">
+  <div class="sticky top-0 left-0 py-2 w-full z-10 border-b border-white/30 bg-white/5 backdrop-blur-xs flex justify-center flex-wrap items-center px-2">
     <RouterLink
       v-for="item in menuItems"
       :key="item.path"

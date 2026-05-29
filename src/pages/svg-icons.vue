@@ -77,7 +77,7 @@ const svgIcons = [
         <p>Digital Keeper storing SVG Icons on this page. All this SVG Icons used on portfolio website of Sentimony Records, a psychedelic music label.</p>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
         <SvgItem
           v-for="icon in svgIcons"
           :key="icon"

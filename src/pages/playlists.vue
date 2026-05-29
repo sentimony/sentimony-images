@@ -29,7 +29,7 @@ const playlistImages = [
         <p>Digital Keeper storing Playlist Images on this page. All this Playlist Images used on portfolio website of Sentimony Records, a psychedelic music label.</p>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
         <Item
           v-for="image in playlistImages"
           :key="image"

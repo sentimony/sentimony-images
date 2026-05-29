@@ -122,7 +122,7 @@ const sortedReleaseImages = computed(() => sortImages(releaseImages, sortBy.valu
 
 <template>
   <div class="flex items-top justify-center">
-    <div class="text-center my-16 px-4 w-full max-w-[96rem]">
+    <div class="text-center my-16 px-4 w-full max-w-384">
 
       <h1 class="text-5xl text-white mb-4 font-Julius tracking-widest uppercase">
         Releases

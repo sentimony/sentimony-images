@@ -43,7 +43,7 @@ useHead({
 
       <a
         href="https://sentimony.com"
-        class="inline-flex items-center justify-center px-8 py-3 text-lg text-white transition-all ease-in-out duration-300 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full hover:from-green-500 hover:to-emerald-500 hover:scale-105 hover:shadow-xl"
+        class="inline-flex items-center justify-center px-8 py-3 text-lg text-white transition-all ease-in-out duration-300 bg-linear-to-r from-green-600 to-emerald-600 rounded-full hover:from-green-500 hover:to-emerald-500 hover:scale-105 hover:shadow-xl"
         target="_blank"
         rel="noopener noreferrer"
         v-wave
@@ -51,7 +51,7 @@ useHead({
         Visit Website
       </a>
 
-      <div class="text-left text-white mt-16 mb-8 indent-5 max-w-xl [&>p]:mb-4 [&>p>a]:text-green-500 hover:[&>p>a]:text-green-700">
+      <div class="text-left text-white mt-16 mb-8 indent-5 max-w-xl [&>p]:mb-4 [&>p>a]:text-green-500 [&>p>a]:hover:text-green-700">
         <p>Hi, you are at the home page of "Digital Keeper" - a repository for storing content files of Sentimony Records, a psychedelic music label.</p>
         <p>Label keeps here artworks of releases, merch images, event fyers, artists photo, music video covers, logotypes versions, svg icons, website backgrounds.</p>
         <p>Developed on JAMstack architecture using Vue, Vite, Netlify, Tailwind. The code is open, you can check the code on <a href="https://github.com/sentimony/digital-keeper" class="text-blue-500 underline">GitHub</a>.</p>

@@ -35,7 +35,7 @@ const svgImages = [
         <p>Digital Keeper storing SVG Images on this page. Collection of various SVG illustrations and graphics.</p>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-[96rem]">
+      <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
         <SvgImageItem
           v-for="image in svgImages"
           :key="image"
