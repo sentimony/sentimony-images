@@ -14,7 +14,7 @@ const menuItems = [
 
 <template>
   <div class="sticky top-0 left-0 py-2 w-full z-10 border-b border-white/30 bg-white/5 backdrop-blur-sm flex justify-center flex-wrap items-center px-2">
-    <NuxtLink
+    <RouterLink
       v-for="item in menuItems"
       :key="item.path"
       :to="item.path"
@@ -23,7 +23,7 @@ const menuItems = [
       v-wave
     >
       {{ item.label }}
-    </NuxtLink>
+    </RouterLink>
   </div>
 </template>
 

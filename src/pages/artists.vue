@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useHead } from '@unhead/vue'
 import { ARTIST_SORT_OPTIONS, sortImages, useArtistSort } from '~/composables/useImageSort'
+import Item from '~/components/Item.vue'
+import SortSelect from '~/components/SortSelect.vue'
 
 useHead({
   title: 'Artists · Digital Keeper',

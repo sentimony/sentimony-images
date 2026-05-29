@@ -5,10 +5,10 @@
 JAMstack development of Digital Keeper - a repo for storing content files of Sentimony Records, a psychedelic music label. It keeps here artworks of releases, merch images, event fyers, artists photo, music video covers, logotypes versions, svg icons, website backgrounds.
 
 ### Used:
-* [Nuxt](https://nuxt.com)
+* [Vue](https://vuejs.org)
+* [Vite](https://vite.dev)
 * [Netlify](https://netlify.com)
 * [Tailwind](https://tailwindcss.com)
-* [Iconify](https://icon-sets.iconify.design)
 
 ### Links:
 
@@ -17,9 +17,7 @@ JAMstack development of Digital Keeper - a repo for storing content files of Sen
 
 ### Monitoring
 
-* [Functions Logs](https://app.netlify.com/projects/sentimony-content/logs/functions/server)
 * [Edge Functions Logs](https://app.netlify.com/projects/sentimony-content/logs/edge-functions)
-* [Requests Left](https://app.netlify.com/projects/sentimony-content/configuration/functions#overview)
 
 ### Run
 

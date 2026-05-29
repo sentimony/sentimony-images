@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useHead } from '@unhead/vue'
+import SvgItem from '~/components/SvgItem.vue'
+
 useHead({
   title: 'SVG Icons · Digital Keeper',
   meta: [

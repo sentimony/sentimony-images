@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useHead } from '@unhead/vue'
 import { RELEASE_SORT_OPTIONS, sortImages, useReleaseSort } from '~/composables/useImageSort'
+import Item from '~/components/Item.vue'
+import SortSelect from '~/components/SortSelect.vue'
 
 useHead({
   title: 'Releases · Digital Keeper',

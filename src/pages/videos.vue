@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useHead } from '@unhead/vue'
+import Item from '~/components/Item.vue'
+
 useHead({
   title: 'Videos · Digital Keeper',
   meta: [

@@ -1,3 +1,5 @@
+import { ref, watch } from 'vue'
+
 export const ARTIST_SORT_OPTIONS = [
   { value: 'date-desc', label: 'Date Joined ↓' },
   { value: 'date-asc',  label: 'Date Joined ↑' },
@@ -20,7 +22,7 @@ function createSortComposable(storageKey: string) {
   let hydrated = false
 
   return function useSort() {
-    if (!hydrated && import.meta.client) {
+    if (!hydrated && typeof window !== 'undefined') {
       hydrated = true
       try {
         const stored = localStorage.getItem(storageKey)
