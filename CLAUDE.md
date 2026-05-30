@@ -9,8 +9,30 @@
 This is a **Digital Keeper** project for **Sentimony Records** - a Ukrainian psychedelic music label founded in 2007.
 
 ### Related Projects
-- **sentimony-images** (this repo): Nuxt app storing release and artist images
+- **sentimony-images** (this repo): Vue 3 + Vite SPA storing release/artist/event/playlist/video/background/SVG images
 - **sentimony-nuxt**: Main website with database at `/public/data/sentimony-db-export.json`
+
+## Commands
+```bash
+npm install
+npm run dev      # Vite dev server (http://localhost:5173, --host)
+npm run build    # Production build -> dist/
+npm run preview  # Preview the production build
+npm run netlify:deploy:stage  # Deploy preview (Netlify alias: stage)
+npm run netlify:deploy:prod   # Deploy to production
+```
+
+## Tech Stack
+Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4 · Reka UI + shadcn-vue · lucide-vue-next · @unhead/vue · v-wave.
+
+## Architecture
+- SPA, **not Nuxt**. Entry: `src/main.ts` -> `src/app.vue` -> `<RouterView>`.
+- **Manual routing** in `src/router.ts` (one explicit route per page, no file-based routing). New page = create `src/pages/X.vue`, register it in the router, add a menu item in `src/components/AppHeader.vue`.
+- `~/` aliases `src/` (vite.config). **No component auto-import** — import every component explicitly.
+- `src/components/ui/` = shadcn-vue components (Button, Card). Custom overlays (`SortSelect`, `ImageLightbox`) are built directly on Reka UI primitives, themed dark/glass.
+- Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
+- Sorting via `src/composables/useImageSort.ts` (`sortImages()`), used by releases/artists.
+- Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`.
 
 ## Data Structure
 
@@ -36,8 +58,8 @@ Both `releaseImages` and `artistImages` are sorted by **release date (oldest fir
 - Commented entries `// 'artist-slug'` = artists in releases but missing images
 
 ## Key Files
-- `app/pages/releases.vue` - Release images sorted by date (99 releases: 2007-2026)
-- `app/pages/artists.vue` - Artist images sorted by first appearance (~115 artists)
+- `src/pages/releases.vue` - Release images sorted by date (99 releases: 2007-2026)
+- `src/pages/artists.vue` - Artist images sorted by first appearance (~115 artists)
 
 ## Artists Without Release Connection
 These artists exist in artistImages but weren't found in tracklistCompact/creditsCompact:

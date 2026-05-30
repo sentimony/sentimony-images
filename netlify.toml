@@ -1,5 +1,6 @@
 [build]
   command = "npm run build"
+  publish = "dist"
   edge_functions = "netlify/edge-functions"
 
 # [[plugins]]
@@ -7,6 +8,11 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Sitemap retired with the Vite/SPA migration - return 410 Gone
+[[edge_functions]]
+  pattern = "/sitemap\\.xml"
+  function = "gone"
 
 [[edge_functions]]
   pattern = "/.*\\.[Pp][Hh][Pp].*"
