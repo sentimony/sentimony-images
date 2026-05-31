@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import SvgImageItem from '~/components/SvgImageItem.vue'
+import ImageLightbox from '~/components/ImageLightbox.vue'
 import { PenTool } from 'lucide-vue-next'
 
 useHead({
@@ -22,6 +24,14 @@ const svgImages = [
   'tree.svg',
   'triangles.svg'
 ]
+
+const activeImage = ref<string | null>(null)
+const lightboxOpen = computed({
+  get: () => activeImage.value !== null,
+  set: (v) => {
+    if (!v) activeImage.value = null
+  },
+})
 </script>
 
 <template>
@@ -42,10 +52,17 @@ const svgImages = [
           v-for="image in svgImages"
           :key="image"
           :image="image"
+          @select="activeImage = $event"
         />
       </div>
 
     </div>
+
+    <ImageLightbox
+      v-model:open="lightboxOpen"
+      :src="activeImage ? `/assets/img/svg-images/${activeImage}` : ''"
+      :title="activeImage ?? ''"
+    />
   </div>
 </template>
 

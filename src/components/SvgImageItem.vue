@@ -3,7 +3,14 @@ interface Props {
   image: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+const emit = defineEmits<{ select: [image: string] }>()
+
+function onClick(e: MouseEvent) {
+  if (e.metaKey || e.ctrlKey || e.button !== 0) return
+  e.preventDefault()
+  emit('select', props.image)
+}
 </script>
 
 <template>
@@ -12,6 +19,7 @@ defineProps<Props>()
     target="_blank"
     class="flex flex-col items-center p-4 bg-white/5 backdrop-blur-xs rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
     v-wave
+    @click="onClick"
   >
     <img
       :src="`/assets/img/svg-images/${image}`"

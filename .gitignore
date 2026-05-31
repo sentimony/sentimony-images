@@ -20,4 +20,4 @@ Thumbs.db
 
 /.agents/
 /.claude/
-# skills-lock.json
+skills-lock.json
