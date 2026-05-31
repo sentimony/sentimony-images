@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
+import ImageLightbox from '~/components/ImageLightbox.vue'
 import { MonitorPlay } from 'lucide-vue-next'
 
 useHead({
@@ -18,6 +20,14 @@ const videoImages = [
   'zymosis-live-kaleidoscopie-2019_th.jpg',
   'zymosis-serdenko_th.jpg'
 ]
+
+const active = ref<{ src: string, title: string } | null>(null)
+const lightboxOpen = computed({
+  get: () => active.value !== null,
+  set: (v) => {
+    if (!v) active.value = null
+  },
+})
 </script>
 
 <template>
@@ -39,10 +49,17 @@ const videoImages = [
           :key="image"
           :image="image"
           folder="videos"
+          @select="active = $event"
         />
       </div>
 
     </div>
+
+    <ImageLightbox
+      v-model:open="lightboxOpen"
+      :src="active?.src ?? ''"
+      :title="active?.title ?? ''"
+    />
   </div>
 </template>
 

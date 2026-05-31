@@ -29,7 +29,8 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - SPA, **not Nuxt**. Entry: `src/main.ts` -> `src/app.vue` -> `<RouterView>`.
 - **Manual routing** in `src/router.ts` (one explicit route per page, no file-based routing). New page = create `src/pages/X.vue`, register it in the router, add a menu item in `src/components/AppHeader.vue`.
 - `~/` aliases `src/` (vite.config). **No component auto-import** — import every component explicitly.
-- `src/components/ui/` = shadcn-vue components (Button, Card). Custom overlays (`SortSelect`, `ImageLightbox`) are built directly on Reka UI primitives, themed dark/glass.
+- `src/components/ui/` = shadcn-vue components (Button, Card, Select, Dialog). `SortSelect` wraps shadcn `Select` (popper); `ImageLightbox` wraps shadcn `Dialog` (custom dark overlay + glass surface via `overlayClass`/`class`).
+- Image grids: `Item.vue` calls `preventDefault()` on left-click and emits `@select` — a page using `<Item>` **must** listen to `@select` and render `<ImageLightbox>`, else the click is dead. All image pages (releases, artists, svg-icons, backgrounds, events, playlists, videos) wire this up; `svg-images` uses `SvgImageItem` (opens original in a new tab instead).
 - Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
 - Sorting via `src/composables/useImageSort.ts` (`sortImages()`), used by releases/artists.
 - Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`.
