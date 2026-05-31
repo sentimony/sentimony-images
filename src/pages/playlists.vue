@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
+import ImageLightbox from '~/components/ImageLightbox.vue'
 import { ListMusic } from 'lucide-vue-next'
 
 useHead({
@@ -16,6 +18,14 @@ const playlistImages = [
   'official_th.jpg',
   'psychill_th.jpg'
 ]
+
+const active = ref<{ src: string, title: string } | null>(null)
+const lightboxOpen = computed({
+  get: () => active.value !== null,
+  set: (v) => {
+    if (!v) active.value = null
+  },
+})
 </script>
 
 <template>
@@ -37,10 +47,17 @@ const playlistImages = [
           :key="image"
           :image="image"
           folder="playlists"
+          @select="active = $event"
         />
       </div>
 
     </div>
+
+    <ImageLightbox
+      v-model:open="lightboxOpen"
+      :src="active?.src ?? ''"
+      :title="active?.title ?? ''"
+    />
   </div>
 </template>
 

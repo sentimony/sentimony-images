@@ -2,7 +2,7 @@
 
 ## Communication
 - **Language**: Ukrainian (українська мова)
-- **Update this file**: Always update CLAUDE.md when new context is discovered or tasks are completed
+- **Update this file**: Always update CLAUDE.md when new context is discovered or tasks are completed. **Keep it ≤128 lines** — trim stale notes when adding new ones
 - **Thinking process**: User appreciates detailed analysis and thinking process - share insights when working on complex tasks
 
 ## Project Overview
@@ -29,7 +29,8 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - SPA, **not Nuxt**. Entry: `src/main.ts` -> `src/app.vue` -> `<RouterView>`.
 - **Manual routing** in `src/router.ts` (one explicit route per page, no file-based routing). New page = create `src/pages/X.vue`, register it in the router, add a menu item in `src/components/AppHeader.vue`.
 - `~/` aliases `src/` (vite.config). **No component auto-import** — import every component explicitly.
-- `src/components/ui/` = shadcn-vue components (Button, Card). Custom overlays (`SortSelect`, `ImageLightbox`) are built directly on Reka UI primitives, themed dark/glass.
+- `src/components/ui/` = shadcn-vue components (Button, Card, Select, Dialog). `SortSelect` wraps shadcn `Select` (popper); `ImageLightbox` wraps shadcn `Dialog` (custom dark overlay + glass surface via `overlayClass`/`class`).
+- Image grids: item components (`Item`, `SvgItem`, `SvgImageItem`) call `preventDefault()` on plain left-click and emit `@select` — a page rendering them **must** listen to `@select` and render `<ImageLightbox>`, else the click is dead. All image pages (releases, artists, svg-icons, svg-images, backgrounds, events, playlists, videos) wire this up. Cmd/Ctrl+click still opens the original in a new tab.
 - Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
 - Sorting via `src/composables/useImageSort.ts` (`sortImages()`), used by releases/artists.
 - Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`.
@@ -58,7 +59,7 @@ Both `releaseImages` and `artistImages` are sorted by **release date (oldest fir
 - Commented entries `// 'artist-slug'` = artists in releases but missing images
 
 ## Key Files
-- `src/pages/releases.vue` - Release images sorted by date (99 releases: 2007-2026)
+- `src/pages/releases.vue` - Release images sorted by date (100 releases: 2007-2026)
 - `src/pages/artists.vue` - Artist images sorted by first appearance (~115 artists)
 
 ## Artists Without Release Connection
@@ -69,14 +70,14 @@ These artists exist in artistImages but weren't found in tracklistCompact/credit
 - `makus` - mastering engineer (appears in credits but as service role)
 
 ## Missing Artists (Commented in Code)
-~80 artists appear in releases but don't have images. Examples:
+~124 artists appear in releases but don't have images. Examples:
 - `ader-project` (2007-02-09 va-fantazma)
 - `synchronick` (2007-02-09 va-fantazma)
 - `hvoya` (2008-04-25 va-true-story)
 - `artech` (2019-06-28 artech-stringer-mode)
 - `mojos-ears` (2020-01-17 gaz-mask-quetzalcoatl)
 
-## Analysis Notes (Session 2024-12-22)
+## Analysis Notes
 
 ### Methodology Used
 1. Extracted all artists from `tracklistCompact` using `<b>Artist Name</b>` pattern
