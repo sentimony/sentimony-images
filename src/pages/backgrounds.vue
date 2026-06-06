@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { Wallpaper } from 'lucide-vue-next'
+import { backgroundImages } from '~/data/background-images'
 
 useHead({
   title: 'Backgrounds',
@@ -11,22 +12,6 @@ useHead({
     { name: 'description', content: 'Cosmic scenes and textures designed as backdrops for the Sentimony Records website, from spiral galaxies to deep-green forests.' }
   ]
 })
-
-const backgroundImages = [
-  'earth-origin.jpg',
-  'earth-origin_1x.jpg',
-  'earth-origin_2x.jpg',
-  'sombrero-green.jpg',
-  'sombrero-green_1x.jpg',
-  'sombrero-green_2x.jpg',
-  'sombrero-origin.jpg',
-  'sombrero-origin_1x.jpg',
-  'sombrero-origin_2x.jpg',
-  'sombrero-red.jpg',
-  'sombrero-red_1x.jpg',
-  'sombrero-red_2x.jpg',
-  'trees-green_v5.jpg'
-]
 
 const active = ref<{ src: string, title: string } | null>(null)
 const lightboxOpen = computed({

@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { ListMusic } from 'lucide-vue-next'
+import { playlistImages } from '~/data/playlist-images'
 
 useHead({
   title: 'Playlists',
@@ -11,13 +12,6 @@ useHead({
     { name: 'description', content: 'Cover art for the label\'s curated playlists, spanning goa, psychill, darkprog and the official Sentimony selection.' }
   ]
 })
-
-const playlistImages = [
-  'darkprog_th.jpg',
-  'goa_th.jpg',
-  'official_th.jpg',
-  'psychill_th.jpg'
-]
 
 const active = ref<{ src: string, title: string } | null>(null)
 const lightboxOpen = computed({

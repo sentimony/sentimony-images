@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import SvgImageItem from '~/components/SvgImageItem.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { PenTool } from 'lucide-vue-next'
+import { svgImages } from '~/data/svg-images'
 
 useHead({
   title: 'SVG Images',
@@ -11,19 +12,6 @@ useHead({
     { name: 'description', content: 'A collection of hand-drawn vector illustrations: playful characters, nature scenes and mandalas created for Sentimony Records.' }
   ]
 })
-
-const svgImages = [
-  'bicycle-girl.svg',
-  'bunny-01.svg',
-  'bunny-02.svg',
-  'cat-01.svg',
-  'farm-barley.svg',
-  'forest.svg',
-  'girl.svg',
-  'mandala-01.svg',
-  'tree.svg',
-  'triangles.svg'
-]
 
 const activeImage = ref<string | null>(null)
 const lightboxOpen = computed({

@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { MonitorPlay } from 'lucide-vue-next'
+import { videoImages } from '~/data/video-images'
 
 useHead({
   title: 'Videos',
@@ -11,15 +12,6 @@ useHead({
     { name: 'description', content: 'Cover frames from Sentimony Records music videos and live sets, the moving side of the label\'s catalogue.' }
   ]
 })
-
-const videoImages = [
-  'boketto-scitalis_th.jpg',
-  'irukanji-live-eve8-2022_th.jpg',
-  'zymosis-last-call_th.jpg',
-  'zymosis-live-chillary-2021_th.jpg',
-  'zymosis-live-kaleidoscopie-2019_th.jpg',
-  'zymosis-serdenko_th.jpg'
-]
 
 const active = ref<{ src: string, title: string } | null>(null)
 const lightboxOpen = computed({

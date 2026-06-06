@@ -1,0 +1,16 @@
+export const backgroundImages = [
+  'earth-origin.jpg',
+  'earth-origin_1x.jpg',
+  'earth-origin_2x.jpg',
+  'sombrero-green.jpg',
+  'sombrero-green_1x.jpg',
+  'sombrero-green_2x.jpg',
+  'sombrero-origin.jpg',
+  'sombrero-origin_1x.jpg',
+  'sombrero-origin_2x.jpg',
+  'sombrero-red.jpg',
+  'sombrero-red_1x.jpg',
+  'sombrero-red_2x.jpg',
+  'trees-origin_v1.jpg',
+  'trees-green_v5.jpg',
+]

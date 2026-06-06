@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import SvgItem from '~/components/SvgItem.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { SplinePointer } from 'lucide-vue-next'
+import { svgIcons } from '~/data/svg-icons'
 
 useHead({
   title: 'SVG Icons',
@@ -19,54 +20,6 @@ useHead({
 //     })
 //   }
 // })
-
-const svgIcons = [
-  'amazon-music.svg',
-  'apple-music-2.svg',
-  'apple-music.svg',
-  'arrow-left.svg',
-  'arrow-right.svg',
-  'bandcamp.svg',
-  'beatport-2.svg',
-  'beatport.svg',
-  'close.svg',
-  'deezer-2.svg',
-  'deezer.svg',
-  'diggers-factory.svg',
-  'discogs.svg',
-  'facebook.svg',
-  'google-play.svg',
-  'googleplus.svg',
-  'instagram.svg',
-  'junodownload.svg',
-  'linkedin.svg',
-  'menu.svg',
-  'mixcloud.svg',
-  'napster-2.svg',
-  'napster.svg',
-  'patreon.svg',
-  'public.svg',
-  'qobuz.svg',
-  'sentimony-lucide.svg',
-  'sentimony-records-logo-v3.1.svg',
-  'sentimony-records-logo-v3.2.svg',
-  'sentimony-records-logo-v3.3.svg',
-  'sentimony-records-logo.svg',
-  'soundcloud-2.svg',
-  'soundcloud-3.svg',
-  'soundcloud.svg',
-  'spotify-2.svg',
-  'spotify.svg',
-  'tidal-2.svg',
-  'tidal.svg',
-  'tiktok.svg',
-  'twitter.svg',
-  'vkontakte.svg',
-  'youtube-2.svg',
-  'youtube-music-2.svg',
-  'youtube-music.svg',
-  'youtube.svg'
-]
 
 const activeIcon = ref<string | null>(null)
 const lightboxOpen = computed({
