@@ -30,7 +30,7 @@ function onClick(e: MouseEvent) {
     <img
       :src="`/assets/img/${folder}/${image}`"
       :alt="image.replace('_th.jpg', '')"
-      class="w-32 h-32 mb-3 object-cover rounded-sm"
+      class="w-32 h-32 mb-3 object-contain rounded-sm"
       loading="lazy"
     />
     <span class="text-white text-xs text-center break-all w-36">

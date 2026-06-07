@@ -3,8 +3,8 @@
   publish = "dist"
   edge_functions = "netlify/edge-functions"
 
-# [[plugins]]
-#   package = "@netlify/plugin-lighthouse"
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
 
 [functions]
   node_bundler = "esbuild"

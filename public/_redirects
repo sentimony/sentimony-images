@@ -41,7 +41,9 @@
 /assets/img/backgrounds/sombrero-red@1x.jpg   /assets/img/backgrounds/sombrero-red_1x.jpg 301
 /assets/img/backgrounds/sombrero-red@2x.jpg   /assets/img/backgrounds/sombrero-red_2x.jpg 301
 
-# SPA fallback - serve the app for unknown routes (must stay last;
+# SPA fallback - route unknown paths through the server function (must stay last;
 # real files and the 301s above take priority over this rewrite).
+# The function logs misses as [404] and serves the SPA shell:
+# 200 for known routes, real 404 otherwise (see netlify/functions/server.mts).
 # Note: /sitemap.xml is retired via the "gone" edge function (410).
-/*  /index.html  200
+/*  /.netlify/functions/server  200
