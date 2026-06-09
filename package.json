@@ -8,8 +8,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "netlify:deploy:stage": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --alias stage --context deploy-preview",
-    "netlify:deploy:prod": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --prod --context production"
+    "deploy:stage": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --alias stage --context deploy-preview",
+    "deploy:prod": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --prod --context production"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",

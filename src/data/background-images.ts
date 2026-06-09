@@ -12,6 +12,6 @@ export const backgroundImages = [
   'sombrero-red_1x.jpg',
   'sombrero-red_2x.jpg',
   'trees-origin_v1.jpg',
-  'trees-green_v5.jpg',
-  'trees-white_v1.jpg',
+  'trees-light_v1.jpg',
+  'trees-dark_v1.jpg',
 ]
