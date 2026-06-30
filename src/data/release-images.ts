@@ -97,7 +97,7 @@ export const releaseImages = [
   'vorg-cyber-soul-day_th.jpg', // 2025-06-27
   'syned-brain-dementor-mysterium-tremendum_th.jpg', // 2025-07-25
   'gaz-mask-12-years_th.jpg', // 2025-12-05
-  'alien-immigrant-plant-medicine_th.jpg', // 2026-06-05 UNRELEASED
-  'frog-prog-songs-of-buffo_th.jpg', // 2026-06-12 UNRELEASED
-  'vorg-cyber-soul-chill_th.jpg', // 2026-06-19 UNRELEASED
+  'alien-immigrant-plant-medicine_th.jpg', // 2026-06-23
+  'frog-prog-songs-of-buffo_th.jpg', // 2026-07-03 UNRELEASED
+  'vorg-cyber-soul-chill_th.jpg', // 2026-07-17 UNRELEASED
 ]

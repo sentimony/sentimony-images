@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import SvgItem from '~/components/SvgItem.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { SplinePointer } from 'lucide-vue-next'
 import { svgIcons } from '~/data/svg-icons'
+import { useImageNavigation } from '~/composables/useImageNavigation'
+import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
 
 useHead({
   title: 'SVG Icons',
@@ -13,21 +15,15 @@ useHead({
   ]
 })
 
-// Auto-log page visit
-// onMounted(() => {
-//   if (import.meta.client) {
-//     fetch('/.netlify/functions/logger').catch(() => {
-//     })
-//   }
-// })
+const { sortBy, sortedImages } = useListSort(
+  svgIcons,
+  (img) => `/assets/img/svg-icons/${img}`
+)
 
-const activeIcon = ref<string | null>(null)
-const lightboxOpen = computed({
-  get: () => activeIcon.value !== null,
-  set: (v) => {
-    if (!v) activeIcon.value = null
-  },
-})
+const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
+
+const activeSrc   = computed(() => activeKey.value ? `/assets/img/svg-icons/${activeKey.value}` : '')
+const activeTitle = computed(() => activeKey.value ?? '')
 </script>
 
 <template>
@@ -43,12 +39,18 @@ const lightboxOpen = computed({
         <p>The complete set of vector icons that power the Sentimony Records website: social links, music platforms, navigation and the label's own marks.</p>
       </div>
 
+      <div class="flex justify-end mb-4">
+        <select v-model="sortBy" aria-label="Sort" class="h-7 rounded-md border border-white/20 bg-white/10 px-2 text-xs text-white cursor-pointer">
+          <option v-for="opt in LIST_SORT_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
       <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
         <SvgItem
-          v-for="icon in svgIcons"
+          v-for="icon in sortedImages"
           :key="icon"
           :icon="icon"
-          @select="activeIcon = $event"
+          @select="open($event)"
         />
       </div>
 
@@ -56,8 +58,12 @@ const lightboxOpen = computed({
 
     <ImageLightbox
       v-model:open="lightboxOpen"
-      :src="activeIcon ? `/assets/img/svg-icons/${activeIcon}` : ''"
-      :title="activeIcon ?? ''"
+      :src="activeSrc"
+      :title="activeTitle"
+      :has-prev="hasPrev"
+      :has-next="hasNext"
+      @prev="prev"
+      @next="next"
     />
   </div>
 </template>

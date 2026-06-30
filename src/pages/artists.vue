@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import { ARTIST_SORT_OPTIONS, sortImages, useArtistSort } from '~/composables/useImageSort'
 import Item from '~/components/Item.vue'
@@ -7,6 +7,7 @@ import SortSelect from '~/components/SortSelect.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { KeyboardMusic } from 'lucide-vue-next'
 import { artistImages } from '~/data/artist-images'
+import { useImageNavigation } from '~/composables/useImageNavigation'
 
 useHead({
   title: 'Artists',
@@ -16,16 +17,12 @@ useHead({
 })
 
 const { sortBy } = useArtistSort()
-
 const sortedArtistImages = computed(() => sortImages(artistImages, sortBy.value))
 
-const active = ref<{ src: string, title: string } | null>(null)
-const lightboxOpen = computed({
-  get: () => active.value !== null,
-  set: (v) => {
-    if (!v) active.value = null
-  },
-})
+const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedArtistImages)
+
+const activeSrc   = computed(() => activeKey.value ? `/assets/img/artists/${activeKey.value.replace('_th.jpg', '_xl.jpg')}` : '')
+const activeTitle = computed(() => activeKey.value ? activeKey.value.replace('_th.jpg', '_xl.jpg') : '')
 </script>
 
 <template>
@@ -51,7 +48,7 @@ const lightboxOpen = computed({
           :key="image"
           :image="image"
           folder="artists"
-          @select="active = $event"
+          @select="open($event.key)"
         />
       </div>
 
@@ -59,8 +56,12 @@ const lightboxOpen = computed({
 
     <ImageLightbox
       v-model:open="lightboxOpen"
-      :src="active?.src ?? ''"
-      :title="active?.title ?? ''"
+      :src="activeSrc"
+      :title="activeTitle"
+      :has-prev="hasPrev"
+      :has-next="hasNext"
+      @prev="prev"
+      @next="next"
     />
   </div>
 </template>

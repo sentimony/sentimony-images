@@ -19,7 +19,7 @@ const DB_FALLBACK = resolve(root, '../sentimony-nuxt/public/data/sentimony-db-ex
 // thumbs: config lists only *_th.jpg; _xl/_og siblings live next to them on disk
 export const PAGES = [
   { file: 'release-images.ts', array: 'releaseImages', folder: 'releases', thumbs: true, chronology: 'releases' },
-  { file: 'artist-images.ts', array: 'artistImages', folder: 'artists', thumbs: true, chronology: 'artists' },
+  { file: 'artist-images.ts', array: 'artistImages', folder: 'artists', thumbs: true, chronology: 'artists', xlOnly: ['hagen-01_xl.jpg'] },
   { file: 'playlist-images.ts', array: 'playlistImages', folder: 'playlists', thumbs: true },
   { file: 'video-images.ts', array: 'videoImages', folder: 'videos', thumbs: true },
   { file: 'event-images.ts', array: 'eventImages', folder: 'events' },
@@ -137,7 +137,7 @@ function releaseLine(file, info) {
 // --- Config analysis: findings with an optional auto-fix ----------------------
 // finding: { msg, fix?: {kind:'insert'|'move', ...}, done?: action label for the fixer }
 
-export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
+export function analyzePage({ file, array, folder, thumbs, chronology, xlOnly = [] }, idx) {
   const parsed = parseConfigArray(join(DATA_DIR, file), array)
   if (!parsed) {
     return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} — перевірте scripts/check-images.mjs` }] }
@@ -229,7 +229,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
     }
     // 5. Orphan _xl on disk without a _th pair — invisible to the page entirely
     for (const f of allFiles.filter((f) => f.endsWith('_xl.jpg'))) {
-      if (!fileSet.has(f.replace('_xl.jpg', '_th.jpg'))) {
+      if (!fileSet.has(f.replace('_xl.jpg', '_th.jpg')) && !xlOnly.includes(f)) {
         findings.push({ msg: `${yellow('є _xl без _th:')} '${f}' — додайте '${f.replace('_xl.jpg', '_th.jpg')}' або приберіть файл` })
       }
     }

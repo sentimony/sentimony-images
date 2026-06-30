@@ -86,6 +86,7 @@ export const artistImages = [
 
   // 2011-01-10 va-tempo-syndicate
   // 'boggy-elf',
+  'hagen-01_xl.jpg',
   'hypnotriod-01_th.jpg',
   'flooting-grooves-01_th.jpg',
   'sygnals-01_th.jpg',
@@ -435,10 +436,11 @@ export const artistImages = [
   'tairam-01_th.jpg',
   'tairam-02_th.jpg',
 
+  // 2026-05-22 alien-immigrant-plant-medicine
+  'alien-immigrant-01_th.jpg',
+
   // 2025-09-01 va-gatekey-vol-3
 
   // 2026-01-02 vorg-cyber-soul-chill
 
-  // 2026-05-22 alien-immigrant-plant-medicine
-  'alien-immigrant-01_th.jpg',
 ]

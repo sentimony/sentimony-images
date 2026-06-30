@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import SvgImageItem from '~/components/SvgImageItem.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import { PenTool } from 'lucide-vue-next'
 import { svgImages } from '~/data/svg-images'
+import { useImageNavigation } from '~/composables/useImageNavigation'
+import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
 
 useHead({
   title: 'SVG Images',
@@ -13,13 +15,15 @@ useHead({
   ]
 })
 
-const activeImage = ref<string | null>(null)
-const lightboxOpen = computed({
-  get: () => activeImage.value !== null,
-  set: (v) => {
-    if (!v) activeImage.value = null
-  },
-})
+const { sortBy, sortedImages } = useListSort(
+  svgImages,
+  (img) => `/assets/img/svg-images/${img}`
+)
+
+const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
+
+const activeSrc   = computed(() => activeKey.value ? `/assets/img/svg-images/${activeKey.value}` : '')
+const activeTitle = computed(() => activeKey.value ?? '')
 </script>
 
 <template>
@@ -35,12 +39,18 @@ const lightboxOpen = computed({
         <p>A collection of hand-drawn vector illustrations: playful characters, nature scenes and mandalas created for Sentimony Records.</p>
       </div>
 
+      <div class="flex justify-end mb-4">
+        <select v-model="sortBy" aria-label="Sort" class="h-7 rounded-md border border-white/20 bg-white/10 px-2 text-xs text-white cursor-pointer">
+          <option v-for="opt in LIST_SORT_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
       <div class="flex gap-4 justify-center flex-wrap mb-16 max-w-384">
         <SvgImageItem
-          v-for="image in svgImages"
+          v-for="image in sortedImages"
           :key="image"
           :image="image"
-          @select="activeImage = $event"
+          @select="open($event)"
         />
       </div>
 
@@ -48,8 +58,12 @@ const lightboxOpen = computed({
 
     <ImageLightbox
       v-model:open="lightboxOpen"
-      :src="activeImage ? `/assets/img/svg-images/${activeImage}` : ''"
-      :title="activeImage ?? ''"
+      :src="activeSrc"
+      :title="activeTitle"
+      :has-prev="hasPrev"
+      :has-next="hasNext"
+      @prev="prev"
+      @next="next"
     />
   </div>
 </template>
