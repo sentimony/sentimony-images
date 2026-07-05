@@ -14,7 +14,7 @@ const IMG_DIR = join(root, 'public/assets/img')
 export const DATA_DIR = join(root, 'src/data')
 
 const API_URL = 'https://sentimony.com/api/releases'
-const DB_FALLBACK = resolve(root, '../sentimony-nuxt/public/data/sentimony-db-export.json')
+const DB_FALLBACK = resolve(root, '../sentimony-nuxt/data/sentimony-db-export.json')
 
 // thumbs: config lists only *_th.jpg; _xl/_og siblings live next to them on disk
 export const PAGES = [
@@ -110,6 +110,10 @@ export function buildIndexes(releases) {
 
 const day = (iso) => iso.slice(0, 10)
 const artistSlugOf = (file) => file.replace(/-\d+_th\.jpg$/, '')
+
+// Curated exception: pulled out of release-date order on purpose (e.g. the
+// label founder pinned first) — chronology checks should ignore these.
+const CHRONOLOGY_EXEMPT = new Set(['irukanji'])
 
 // Insertion anchor: the last config entry dated <= the new date (self excluded for moves)
 function suggestPosition(entries, dateOf, newDate, exclude = null) {
@@ -257,6 +261,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology, xlOnly = 
   if (chronology && idx) {
     let max = null
     for (const e of entries) {
+      if (chronology === 'artists' && CHRONOLOGY_EXEMPT.has(artistSlugOf(e.value))) continue
       const d = dateOf(e.value)
       if (!d) {
         if (chronology === 'releases') {

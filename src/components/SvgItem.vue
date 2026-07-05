@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
+import { fetchFileSize } from '~/composables/useFileSize'
 
 interface Props {
   icon: string
@@ -10,12 +11,13 @@ const emit = defineEmits<{ select: [icon: string] }>()
 
 const fileSizeLabel = ref<string | null>(null)
 
+// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED
+const abortController = new AbortController()
+onBeforeUnmount(() => abortController.abort())
+
 async function onImgLoad() {
-  try {
-    const res = await fetch(`/assets/img/svg-icons/${props.icon}`, { method: 'HEAD' })
-    const bytes = Number(res.headers.get('content-length'))
-    if (bytes > 0) fileSizeLabel.value = `${bytes} B`
-  } catch {}
+  const bytes = await fetchFileSize(`/assets/img/svg-icons/${props.icon}`, abortController.signal)
+  if (bytes) fileSizeLabel.value = `${bytes} B`
 }
 
 function onClick(e: MouseEvent) {

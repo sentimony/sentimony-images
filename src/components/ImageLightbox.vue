@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
 import { ChevronLeft, ChevronRight, ExternalLink, ImageDown, X } from 'lucide-vue-next'
+import { fetchFileSize, formatFileSize } from '~/composables/useFileSize'
 
 interface Props {
   src: string
@@ -40,22 +41,19 @@ watch(() => props.src, (src) => {
   if (open.value && src) loadFileSize(src)
 })
 
-onUnmounted(() => document.removeEventListener('keydown', onKeydown))
+// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED
+const abortController = new AbortController()
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown)
+  abortController.abort()
+})
 
 async function loadFileSize(src: string) {
-  try {
-    const res = await fetch(src, { method: 'HEAD' })
-    const bytes = Number(res.headers.get('content-length'))
-    if (bytes > 0) {
-      fileSize.value = src.endsWith('.svg')
-        ? `${bytes} B`
-        : bytes < 1024 * 1024
-          ? `${Math.round(bytes / 1024)} KB`
-          : `${(bytes / 1024 / 1024).toFixed(1)} MB`
-    }
-  } catch {
-    fileSize.value = null
-  }
+  const bytes = await fetchFileSize(src, abortController.signal)
+  fileSize.value = bytes
+    ? src.endsWith('.svg') ? `${bytes} B` : formatFileSize(bytes)
+    : null
 }
 
 function onImgLoad(e: Event) {

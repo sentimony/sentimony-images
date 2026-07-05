@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
+import { fetchFileSize, formatFileSize } from '~/composables/useFileSize'
 
 interface Props {
   image: string
@@ -14,16 +15,13 @@ const src = computed(() => `/assets/img/${props.folder}/${fullName.value}`)
 
 const fileSizeLabel = ref<string | null>(null)
 
+// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED
+const abortController = new AbortController()
+onBeforeUnmount(() => abortController.abort())
+
 async function onImgLoad() {
-  try {
-    const res = await fetch(src.value, { method: 'HEAD' })
-    const bytes = Number(res.headers.get('content-length'))
-    if (bytes > 0) {
-      fileSizeLabel.value = bytes < 1024 * 1024
-        ? `${Math.round(bytes / 1024)} KB`
-        : `${(bytes / 1024 / 1024).toFixed(1)} MB`
-    }
-  } catch {}
+  const bytes = await fetchFileSize(src.value, abortController.signal)
+  if (bytes) fileSizeLabel.value = formatFileSize(bytes)
 }
 
 function onClick(e: MouseEvent) {
