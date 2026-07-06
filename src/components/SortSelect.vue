@@ -1,13 +1,11 @@
-<script setup lang="ts">
-import type { ImageSortOption } from '~/composables/useImageSort'
-
+<script setup lang="ts" generic="T extends string">
 interface SortOption {
-  value: ImageSortOption
+  value: T
   label: string
 }
 
 defineProps<{ options: readonly SortOption[] }>()
-const sortBy = defineModel<ImageSortOption>({ required: true })
+const sortBy = defineModel<T>({ required: true })
 </script>
 
 <template>

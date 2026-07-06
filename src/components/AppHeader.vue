@@ -30,7 +30,7 @@ const menuItems = [
       <li v-for="item in menuItems" :key="item.path">
         <RouterLink
           :to="item.path"
-          class="transition-[background-color] ease-in-out duration-300 text-white text-[16px] hover:bg-white/30 px-2 sm:px-3 md:px-4 lg:px-5 h-[56px] flex items-center justify-center gap-1.5 rounded-[2px] aria-[current=page]:bg-white/10"
+          class="transition-[background-color] ease-in-out duration-300 text-white text-[16px] hover:bg-white/30 px-2 sm:px-3 md:px-4 lg:px-5 h-14 flex items-center justify-center gap-1.5 rounded-[2px] aria-[current=page]:bg-white/10"
           v-wave
         >
           <component :is="item.icon" class="size-4 shrink-0" :stroke-width="2" />

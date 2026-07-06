@@ -23,6 +23,8 @@ npm run deploy:stage   # Deploy preview (Netlify alias: stage)
 npm run deploy:prod    # Deploy to production
 npm run check:images  # Звірка img-папок з конфігами, read-only (авто-запуск після банера dev-сервера — плагін checkImages у vite.config.ts)
 npm run fix:configs   # Виправлення конфігів (вставки + переміщення за хронологією) з підтвердженням; --yes пропускає prompt
+npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json
+npm run check:svg     # Монохромні SVG без fill="currentColor" (svg-icons + svg-images); пропонує виправити, --yes пропускає prompt
 ```
 Deploy auth: токен у `.env/.env.local` (`NETLIFY_AUTH_TOKEN`); dotenv-cli + netlify-cli тягнуться через `npx -y` (без devDep) і підхоплюють токен автоматично — просто `npm run deploy:stage`.
 
@@ -40,10 +42,13 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - **Manual routing** in `src/router.ts` (one explicit route per page, no file-based routing). New page = create `src/pages/X.vue`, register it in the router, add a menu item in `src/components/AppHeader.vue`.
 - `~/` and `@/` both alias `src/` (vite.config). **No component auto-import** — import every component explicitly.
 - Code style: 2-space indent, single quotes, no semicolons; components PascalCase, composables `useXxx`, data/utility modules kebab-case.
-- No `src/components/ui/` layer. `SortSelect` is a plain native `<select>`. `ImageLightbox` is hand-rolled (`Teleport` + `Transition`, dark overlay + glass surface), no Dialog/UI dependency.
+- No `src/components/ui/` layer. `ImageLightbox` is hand-rolled (`Teleport` + `Transition`, dark overlay + glass surface), no Dialog/UI dependency. Gotcha: його keydown-слухач (Esc/стрілки) і завантаження розміру живуть у `watch(open, …, { immediate: true })` — `immediate` обов'язковий, бо з deep-link `?img=` лайтбокс монтується вже відкритим.
 - Image grids: item components (`Item`, `SvgItem`, `SvgImageItem`) call `preventDefault()` on plain left-click and emit `@select` — a page rendering them **must** listen to `@select` and render `<ImageLightbox>`, else the click is dead. All image pages (releases, artists, svg-icons, svg-images, backgrounds, events, playlists, videos) wire this up. Cmd/Ctrl+click still opens the original in a new tab.
 - Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
-- Composables: `useImageSort` (`sortImages()`, releases/artists), `useListSort`, `useImageNavigation`, `useFileSize`.
+- Image pages share `ImagePageLayout.vue` (wrapper + h1/icon + slots: description/sort/default grid/lightbox) і generic `SortSelect` (`generic="T extends string"`); lightbox src/title через `useLightboxImage` (useImageNavigation.ts).
+- Lightbox URL: `?img=` містить ім'я файла **без розширення** (`stripExt` в useImageNavigation); `activeKey` шукає повний файл у списку сторінки, старі лінки з `.jpg`/`.svg` теж резолвляться.
+- Розміри файлів: jpg — `formatFileSize` (KB/MB), svg — `formatSvgFileSize` (`6477 B` / `58943 B (58 KB)` від 10 KB).
+- Composables: `useImageSort` (`sortImages()` + size map, releases/artists), `useListSort`/`useImageSizes`, `useImageNavigation`, `useFileSize`. Усі 8 сторінок мають сортування за розміром (HEAD content-length).
 - Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`.
 - Image config arrays live in `src/data/*.ts`, not in pages — new page with images = data file in `src/data/` + entry in `PAGES` of `scripts/check-images.mjs`.
 - SPA fallback: `/* /.netlify/functions/server 200` в `public/_redirects` → `netlify/functions/server.mts`: логує промахи `[404] [BOT|USER] ip => path` (Netlify → Logs → Functions, 24h), віддає shell — 200 для відомих маршрутів, справжній 404 інакше. Нова сторінка = додати шлях у `SPA_ROUTES` функції (sync із `src/router.ts`). Реальні файли йдуть з CDN, функцію не чіпають.

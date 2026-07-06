@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
 import { ChevronLeft, ChevronRight, ExternalLink, ImageDown, X } from 'lucide-vue-next'
-import { fetchFileSize, formatFileSize } from '~/composables/useFileSize'
+import { fetchFileSize, formatFileSize, formatSvgFileSize } from '~/composables/useFileSize'
 
 interface Props {
   src: string
@@ -25,6 +25,12 @@ const infoLabel = computed(() =>
   [dimensions.value, fileSize.value].filter(Boolean).join(' · ')
 )
 
+// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED.
+// Declared before the immediate watcher below, which may call loadFileSize right away.
+const abortController = new AbortController()
+
+// immediate: the lightbox can mount already open (deep link with ?img=),
+// and Esc/size loading must work then too
 watch(open, (isOpen) => {
   if (isOpen) {
     document.addEventListener('keydown', onKeydown)
@@ -34,16 +40,13 @@ watch(open, (isOpen) => {
     fileSize.value = null
     dimensions.value = null
   }
-})
+}, { immediate: true })
 
 watch(() => props.src, (src) => {
   fileSize.value = null
   dimensions.value = null
   if (open.value && src) loadFileSize(src)
 })
-
-// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED
-const abortController = new AbortController()
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown)
@@ -53,7 +56,7 @@ onUnmounted(() => {
 async function loadFileSize(src: string) {
   const bytes = await fetchFileSize(src, abortController.signal)
   fileSize.value = bytes
-    ? src.endsWith('.svg') ? `${bytes} B` : formatFileSize(bytes)
+    ? src.endsWith('.svg') ? formatSvgFileSize(bytes) : formatFileSize(bytes)
     : null
 }
 

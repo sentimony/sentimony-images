@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import { fetchFileSize } from '~/composables/useFileSize'
+import { fetchFileSize, formatSvgFileSize } from '~/composables/useFileSize'
 
 interface Props {
   image: string
@@ -17,7 +17,7 @@ onBeforeUnmount(() => abortController.abort())
 
 async function onImgLoad() {
   const bytes = await fetchFileSize(`/assets/img/svg-images/${props.image}`, abortController.signal)
-  if (bytes) fileSizeLabel.value = `${bytes} B`
+  if (bytes) fileSizeLabel.value = formatSvgFileSize(bytes)
 }
 
 function onClick(e: MouseEvent) {

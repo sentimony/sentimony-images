@@ -4,8 +4,10 @@
   "type": "module",
   "scripts": {
     "check:images": "node scripts/check-images.mjs",
+    "check:svg": "node scripts/check-svg-colors.mjs",
+    "typecheck": "vue-tsc --noEmit",
     "fix:configs": "node scripts/fix-configs.mjs",
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "deploy:stage": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --alias stage --context deploy-preview",
@@ -16,7 +18,9 @@
     "@types/node": "^26.1.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "tailwindcss": "^4.3.2",
-    "vite": "^8.1.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.1.3",
+    "vue-tsc": "^3.3.6"
   },
   "dependencies": {
     "@unhead/vue": "^3.1.7",
