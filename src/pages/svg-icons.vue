@@ -62,6 +62,7 @@ const activeTitle = computed(() => activeKey.value ?? '')
       :title="activeTitle"
       :has-prev="hasPrev"
       :has-next="hasNext"
+      img-class="brightness-0 invert"
       @prev="prev"
       @next="next"
     />

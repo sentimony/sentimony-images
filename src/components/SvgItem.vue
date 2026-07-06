@@ -38,7 +38,7 @@ function onClick(e: MouseEvent) {
     <img
       :src="`/assets/img/svg-icons/${icon}`"
       :alt="icon.replace('.svg', '')"
-      class="w-12 h-12 mb-6"
+      class="w-12 h-12 mb-6 brightness-0 invert"
       loading="lazy"
       @load="onImgLoad"
     />

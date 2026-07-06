@@ -8,11 +8,11 @@ const currentYear = new Date().getFullYear()
       <p class="mb-2">2006 - {{ currentYear }} © Sentimony Records</p>
       <p class="mb-2">All Rights Reserved</p>
       <img
-        src="/assets/img/svg-icons/sentimony-records-logo-v3.2.svg?01"
+        src="/assets/img/svg-icons/sentimony-records-logo-v3.3.svg?01"
         alt="Sentimony Records"
         width="32"
         height="32"
-        class="opacity-80"
+        class="opacity-80 brightness-0 invert"
       />
     </div>
   </footer>

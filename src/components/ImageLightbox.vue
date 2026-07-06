@@ -8,6 +8,7 @@ interface Props {
   title: string
   hasPrev?: boolean
   hasNext?: boolean
+  imgClass?: string
 }
 
 const props = defineProps<Props>()
@@ -104,17 +105,24 @@ function onOverlayClick(e: MouseEvent) {
             <X class="size-5" :stroke-width="2" />
           </button>
 
-          <img
-            v-if="src"
-            :src="src"
-            :alt="title"
-            class="max-h-[60vh] max-w-full object-contain"
-            @load="onImgLoad"
-          />
+          <!-- Fixed-height area so the dialog doesn't resize when navigating between images with different aspect ratios -->
+          <div class="flex h-[60vh] w-full items-center justify-center">
+            <img
+              v-if="src"
+              :src="src"
+              :alt="title"
+              class="max-h-full max-w-full object-contain"
+              :class="imgClass"
+              @load="onImgLoad"
+            />
+          </div>
 
-          <p class="text-sm font-normal break-all text-center">{{ title }}</p>
+          <p class="text-sm font-normal break-all text-center">
+            <span class="text-white/50">File:</span> {{ title }}
+          </p>
 
-          <p v-if="infoLabel" class="text-xs text-white/50 -mt-4">{{ infoLabel }}</p>
+          <!-- Always rendered to keep dialog height stable while metadata loads -->
+          <p class="text-xs text-white/50 -mt-4 min-h-4">{{ infoLabel ? `Size: ${infoLabel}` : '' }}</p>
 
           <div class="flex items-center gap-6">
             <a

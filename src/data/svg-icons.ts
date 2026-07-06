@@ -24,6 +24,8 @@ export const svgIcons = [
   'napster.svg',
   'patreon.svg',
   'public.svg',
+  'qobuz-2.svg',
+  'qobuz-3.svg',
   'qobuz.svg',
   'sentimony-lucide.svg',
   'sentimony-records-logo-v3.1.svg',

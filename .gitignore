@@ -21,8 +21,6 @@ dist/
 .claude/
 .opencode/
 skills-lock.json
-AGENTS.md
-CLAUDE.md
 
 graphify-out/*
 !graphify-out/GRAPH_REPORT.md

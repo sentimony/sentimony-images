@@ -14,7 +14,7 @@ useHead({
   <div class="flex items-center justify-center">
     <div class="text-center my-16 px-4">
 
-      <img src="/assets/img/svg-icons/sentimony-records-logo-v3.3.svg?01" alt="Sentimony Records logo svg v3.3" width="80" height="80" class="mx-auto mb-4" />
+      <img src="/assets/img/svg-icons/sentimony-records-logo-v3.2.svg?01" alt="Sentimony Records logo svg v3.2" width="80" height="80" class="mx-auto mb-4 brightness-0 invert" />
 
       <h1 class="text-5xl text-white mb-4 font-Julius tracking-widest uppercase">
         Sentimony<br>Records
