@@ -45,7 +45,7 @@ function onClick(e: MouseEvent) {
     <span class="text-white text-xs text-center break-all w-36">
       {{ image }}
     </span>
-    <span v-if="fileSizeLabel" class="text-white/40 text-xs mt-1">
+    <span class="text-white/40 text-xs mt-1 min-h-4">
       {{ fileSizeLabel }}
     </span>
   </a>

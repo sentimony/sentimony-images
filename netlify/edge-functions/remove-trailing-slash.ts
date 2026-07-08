@@ -10,7 +10,7 @@ export default async (request: Request) => {
     // IP клієнта з Edge заголовка (fallback на X-Forwarded-For)
     const ip =
       request.headers.get("x-nf-client-connection-ip") ||
-      (request.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+      (request.headers.get("x-forwarded-for") || "").split(",")[0]?.trim() ||
       "unknown";
 
     // Кольори для логування

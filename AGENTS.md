@@ -23,7 +23,7 @@ npm run deploy:stage   # Deploy preview (Netlify alias: stage)
 npm run deploy:prod    # Deploy to production
 npm run check:images  # Звірка img-папок з конфігами, read-only (авто-запуск після банера dev-сервера — плагін checkImages у vite.config.ts)
 npm run fix:configs   # Виправлення конфігів (вставки + переміщення за хронологією) з підтвердженням; --yes пропускає prompt
-npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json
+npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json. Обидва extends tsconfig.base.json (спільні strict + noUncheckedIndexedAccess); scripts/*.mjs не типізуються (checkJs не вмикали — CI не ганяє, як і тести)
 npm run check:svg     # Монохромні SVG без fill="currentColor" (svg-icons + svg-images); пропонує виправити, --yes пропускає prompt
 ```
 Deploy auth: токен у `.env/.env.local` (`NETLIFY_AUTH_TOKEN`); dotenv-cli + netlify-cli тягнуться через `npx -y` (без devDep) і підхоплюють токен автоматично — просто `npm run deploy:stage`.

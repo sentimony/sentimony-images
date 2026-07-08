@@ -13,7 +13,7 @@ export default async (request: Request) => {
   // IP клієнта з Edge заголовка (fallback на X-Forwarded-For)
   const ip =
     request.headers.get("x-nf-client-connection-ip") ||
-    (request.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+    (request.headers.get("x-forwarded-for") || "").split(",")[0]?.trim() ||
     "unknown";
 
   // лог: "95.67.123.29 => /wp" (IP і "=>" сірим, шлях червоним)

@@ -24,7 +24,7 @@ defineProps<{
         <slot name="sort" />
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap mb-16">
+      <div class="grid grid-cols-6 gap-4 mb-16">
         <slot />
       </div>
 

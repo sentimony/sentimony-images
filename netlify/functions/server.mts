@@ -31,7 +31,7 @@ export default async (request: Request) => {
   if (!known) {
     const ip =
       request.headers.get('x-nf-client-connection-ip') ||
-      (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+      (request.headers.get('x-forwarded-for') || '').split(',')[0]?.trim() ||
       'unknown'
     const ua = request.headers.get('user-agent') || ''
     const tag = ua ? (BOT_RE.test(ua) ? '[BOT]' : '[USER]') : '[BOT?]'
