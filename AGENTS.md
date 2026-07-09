@@ -23,8 +23,9 @@ npm run deploy:stage   # Deploy preview (Netlify alias: stage)
 npm run deploy:prod    # Deploy to production
 npm run check:images  # Звірка img-папок з конфігами, read-only (авто-запуск після банера dev-сервера — плагін checkImages у vite.config.ts)
 npm run fix:configs   # Виправлення конфігів (вставки + переміщення за хронологією) з підтвердженням; --yes пропускає prompt
-npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json. Обидва extends tsconfig.base.json (спільні strict + noUncheckedIndexedAccess); scripts/*.mjs не типізуються (checkJs не вмикали — CI не ганяє, як і тести)
+npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json. Обидва extends tsconfig.base.json (спільні strict + noUncheckedIndexedAccess); scripts/*.mjs не типізуються (checkJs не вмикали)
 npm run check:svg     # Монохромні SVG без fill="currentColor" (svg-icons + svg-images); пропонує виправити, --yes пропускає prompt
+npm run test:pages    # Playwright smoke: кожен роут із router.ts вантажиться (HTTP<400, без console.error/pageerror, h1 відрендерився). Стартує vite preview сам; треба npm run build перед цим. BASE_URL — тест уже запущеного сервера
 ```
 Deploy auth: токен у `.env/.env.local` (`NETLIFY_AUTH_TOKEN`); dotenv-cli + netlify-cli тягнуться через `npx -y` (без devDep) і підхоплюють токен автоматично — просто `npm run deploy:stage`.
 
@@ -46,9 +47,10 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - Image grids: item components (`Item`, `SvgItem`, `SvgImageItem`) call `preventDefault()` on plain left-click and emit `@select` — a page rendering them **must** listen to `@select` and render `<ImageLightbox>`, else the click is dead. All image pages (releases, artists, svg-icons, svg-images, backgrounds, events, playlists, videos) wire this up. Cmd/Ctrl+click still opens the original in a new tab.
 - Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
 - Image pages share `ImagePageLayout.vue` (wrapper + h1/icon + slots: description/sort/default grid/lightbox) і generic `SortSelect` (`generic="T extends string"`); lightbox src/title через `useLightboxImage` (useImageNavigation.ts).
+- `ImagePageLayout` grid: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-6` (рівно 6 карток у рядку на desktop), sort-select по правому краю контейнера (`max-w-7xl`). Gotcha: item-компоненти (`Item`/`SvgItem`/`SvgImageItem`) рендерять лейбл розміру завжди-присутнім span із `min-h-4` (не `v-if`) — резервує висоту, щоб async-HEAD не давав layout-shift; той самий патерн у ImageLightbox. Не міняй на `v-if`.
 - Lightbox URL: `?img=` містить ім'я файла **без розширення** (`stripExt` в useImageNavigation); `activeKey` шукає повний файл у списку сторінки, старі лінки з `.jpg`/`.svg` теж резолвляться.
 - Розміри файлів: jpg — `formatFileSize` (KB/MB), svg — `formatSvgFileSize` (`6477 B` / `58943 B (58 KB)` від 10 KB).
-- Composables: `useImageSort` (`sortImages()` + size map, releases/artists), `useListSort`/`useImageSizes`, `useImageNavigation`, `useFileSize`. Усі 8 сторінок мають сортування за розміром (HEAD content-length).
+- Composables: `useImageSort` (`sortImages()` + size map, releases/artists), `useListSort`/`useImageSizes`, `useImageNavigation`, `useFileSize`. Усі 8 image-сторінок мають сортування за розміром (HEAD content-length); роутів у router.ts 9 (+ index).
 - Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`.
 - Image config arrays live in `src/data/*.ts`, not in pages — new page with images = data file in `src/data/` + entry in `PAGES` of `scripts/check-images.mjs`.
 - SPA fallback: `/* /.netlify/functions/server 200` в `public/_redirects` → `netlify/functions/server.mts`: логує промахи `[404] [BOT|USER] ip => path` (Netlify → Logs → Functions, 24h), віддає shell — 200 для відомих маршрутів, справжній 404 інакше. Нова сторінка = додати шлях у `SPA_ROUTES` функції (sync із `src/router.ts`). Реальні файли йдуть з CDN, функцію не чіпають.
@@ -100,6 +102,10 @@ Inline `// NNN slug (role)` comments in `artist-images.ts` mirror sentimony-nuxt
 - [ ] Verify astrocat, gribessa, tairam origin
 - [ ] Consider separate arrays for artwork/mastering roles
 - [ ] check-images: кешувати відповідь API у `.cache/` (gitignored) як офлайн-fallback замість читання export із сусіднього репо
+
+## CI
+`.github/workflows/ci.yml` (push у master + PR): `npm ci` → typecheck → build → install chromium → `test:pages`. `timeout-minutes: 10`, concurrency скасовує застарілі рани.
+- `scripts/smoke-pages.mjs`: `ROUTES` — **третє** місце синку роутів (з `src/router.ts` + `SPA_ROUTES` у server.mts). Нова сторінка = додати шлях у всі три. Запускає vite напряму (не через npx), щоб kill не лишав zombie на порту.
 
 ## graphify
 
