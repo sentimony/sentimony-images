@@ -31,3 +31,10 @@ export function formatFileSize(bytes: number): string {
     ? `${Math.round(bytes / 1024)} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
+
+// SVGs are small enough that exact bytes matter; the KB hint helps once the number gets long
+export function formatSvgFileSize(bytes: number): string {
+  return bytes < 10000
+    ? `${bytes} B`
+    : `${bytes} B (${Math.round(bytes / 1024)} KB)`
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import { fetchFileSize } from '~/composables/useFileSize'
+import { fetchFileSize, formatSvgFileSize } from '~/composables/useFileSize'
 
 interface Props {
   icon: string
@@ -17,7 +17,7 @@ onBeforeUnmount(() => abortController.abort())
 
 async function onImgLoad() {
   const bytes = await fetchFileSize(`/assets/img/svg-icons/${props.icon}`, abortController.signal)
-  if (bytes) fileSizeLabel.value = `${bytes} B`
+  if (bytes) fileSizeLabel.value = formatSvgFileSize(bytes)
 }
 
 function onClick(e: MouseEvent) {
@@ -38,14 +38,14 @@ function onClick(e: MouseEvent) {
     <img
       :src="`/assets/img/svg-icons/${icon}`"
       :alt="icon.replace('.svg', '')"
-      class="w-12 h-12 mb-6"
+      class="w-12 h-12 mb-6 brightness-0 invert"
       loading="lazy"
       @load="onImgLoad"
     />
     <span class="text-white text-xs text-center break-all w-36">
       {{ icon }}
     </span>
-    <span v-if="fileSizeLabel" class="text-white/40 text-xs mt-1">
+    <span class="text-white/40 text-xs mt-1 min-h-4">
       {{ fileSizeLabel }}
     </span>
   </a>

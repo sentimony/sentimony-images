@@ -5,9 +5,11 @@ import { RELEASE_SORT_OPTIONS, sortImages, useReleaseSort } from '~/composables/
 import Item from '~/components/Item.vue'
 import SortSelect from '~/components/SortSelect.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
+import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { Disc3 } from 'lucide-vue-next'
 import { releaseImages } from '~/data/release-images'
-import { useImageNavigation } from '~/composables/useImageNavigation'
+import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
+import { useImageSizes } from '~/composables/useListSort'
 
 useHead({
   title: 'Releases',
@@ -17,53 +19,43 @@ useHead({
 })
 
 const { sortBy } = useReleaseSort()
-const sortedReleaseImages = computed(() => sortImages(releaseImages, sortBy.value))
+const sizes = useImageSizes(releaseImages, (img) => `/assets/img/releases/${img.replace('_th.jpg', '_xl.jpg')}`)
+const sortedReleaseImages = computed(() => sortImages(releaseImages, sortBy.value, sizes.value))
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedReleaseImages)
-
-const activeSrc   = computed(() => activeKey.value ? `/assets/img/releases/${activeKey.value.replace('_th.jpg', '_xl.jpg')}` : '')
-const activeTitle = computed(() => activeKey.value ? activeKey.value.replace('_th.jpg', '_xl.jpg') : '')
+const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'releases', true)
 </script>
 
 <template>
-  <div class="flex items-top justify-center">
-    <div class="text-center my-16 px-4 w-full max-w-384">
+  <ImagePageLayout title="Releases" :icon="Disc3">
+    <template #description>
+      <p>Cover artworks for every Sentimony Records release, from the 2007 debut to the newest drop, lined up in chronological order so the label's visual story unfolds as you scroll.</p>
+    </template>
 
-      <h1 class="font-bold text-4xl text-white mb-4 font-Julius tracking-widest uppercase flex items-center justify-center gap-4">
-        <Disc3 class="size-10 shrink-0" :stroke-width="2" />
-        Releases
-      </h1>
+    <template #sort>
+      <SortSelect v-model="sortBy" :options="RELEASE_SORT_OPTIONS" />
+    </template>
 
-      <div class="text-left text-white mt-4 mb-16 indent-5 max-w-xl mx-auto [&>p]:mb-4">
-        <p>Cover artworks for every Sentimony Records release, from the 2007 debut to the newest drop, lined up in chronological order so the label's visual story unfolds as you scroll.</p>
-      </div>
-
-      <div class="flex justify-end mb-4">
-        <SortSelect v-model="sortBy" :options="RELEASE_SORT_OPTIONS" />
-      </div>
-
-      <div class="flex gap-4 justify-center flex-wrap mb-16">
-        <Item
-          v-for="image in sortedReleaseImages"
-          :key="image"
-          :image="image"
-          folder="releases"
-          @select="open($event.key)"
-        />
-      </div>
-
-    </div>
-
-    <ImageLightbox
-      v-model:open="lightboxOpen"
-      :src="activeSrc"
-      :title="activeTitle"
-      :has-prev="hasPrev"
-      :has-next="hasNext"
-      @prev="prev"
-      @next="next"
+    <Item
+      v-for="image in sortedReleaseImages"
+      :key="image"
+      :image="image"
+      folder="releases"
+      @select="open($event.key)"
     />
-  </div>
+
+    <template #lightbox>
+      <ImageLightbox
+        v-model:open="lightboxOpen"
+        :src="activeSrc"
+        :title="activeTitle"
+        :has-prev="hasPrev"
+        :has-next="hasNext"
+        @prev="prev"
+        @next="next"
+      />
+    </template>
+  </ImagePageLayout>
 </template>
 
 <style></style>

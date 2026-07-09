@@ -20,13 +20,15 @@ function checkImages(): Plugin {
   }
 }
 
+const srcDir = fileURLToPath(new URL('./src', import.meta.url))
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), tailwindcss(), checkImages()],
   resolve: {
     alias: {
-      '~': fileURLToPath(new URL('./src', import.meta.url)),
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '~': srcDir,
+      '@': srcDir,
     },
   },
 })

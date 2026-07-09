@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
 import { ChevronLeft, ChevronRight, ExternalLink, ImageDown, X } from 'lucide-vue-next'
-import { fetchFileSize, formatFileSize } from '~/composables/useFileSize'
+import { fetchFileSize, formatFileSize, formatSvgFileSize } from '~/composables/useFileSize'
 
 interface Props {
   src: string
   title: string
   hasPrev?: boolean
   hasNext?: boolean
+  imgClass?: string
 }
 
 const props = defineProps<Props>()
@@ -24,6 +25,12 @@ const infoLabel = computed(() =>
   [dimensions.value, fileSize.value].filter(Boolean).join(' · ')
 )
 
+// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED.
+// Declared before the immediate watcher below, which may call loadFileSize right away.
+const abortController = new AbortController()
+
+// immediate: the lightbox can mount already open (deep link with ?img=),
+// and Esc/size loading must work then too
 watch(open, (isOpen) => {
   if (isOpen) {
     document.addEventListener('keydown', onKeydown)
@@ -33,16 +40,13 @@ watch(open, (isOpen) => {
     fileSize.value = null
     dimensions.value = null
   }
-})
+}, { immediate: true })
 
 watch(() => props.src, (src) => {
   fileSize.value = null
   dimensions.value = null
   if (open.value && src) loadFileSize(src)
 })
-
-// Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED
-const abortController = new AbortController()
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown)
@@ -52,7 +56,7 @@ onUnmounted(() => {
 async function loadFileSize(src: string) {
   const bytes = await fetchFileSize(src, abortController.signal)
   fileSize.value = bytes
-    ? src.endsWith('.svg') ? `${bytes} B` : formatFileSize(bytes)
+    ? src.endsWith('.svg') ? formatSvgFileSize(bytes) : formatFileSize(bytes)
     : null
 }
 
@@ -104,17 +108,24 @@ function onOverlayClick(e: MouseEvent) {
             <X class="size-5" :stroke-width="2" />
           </button>
 
-          <img
-            v-if="src"
-            :src="src"
-            :alt="title"
-            class="max-h-[60vh] max-w-full object-contain"
-            @load="onImgLoad"
-          />
+          <!-- Fixed-height area so the dialog doesn't resize when navigating between images with different aspect ratios -->
+          <div class="flex h-[60vh] w-full items-center justify-center">
+            <img
+              v-if="src"
+              :src="src"
+              :alt="title"
+              class="max-h-full max-w-full object-contain"
+              :class="imgClass"
+              @load="onImgLoad"
+            />
+          </div>
 
-          <p class="text-sm font-normal break-all text-center">{{ title }}</p>
+          <p class="text-sm font-normal break-all text-center">
+            <span class="text-white/50">File:</span> {{ title }}
+          </p>
 
-          <p v-if="infoLabel" class="text-xs text-white/50 -mt-4">{{ infoLabel }}</p>
+          <!-- Always rendered to keep dialog height stable while metadata loads -->
+          <p class="text-xs text-white/50 -mt-4 min-h-4">{{ infoLabel ? `Size: ${infoLabel}` : '' }}</p>
 
           <div class="flex items-center gap-6">
             <a

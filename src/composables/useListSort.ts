@@ -1,4 +1,5 @@
 import { ref, computed, onMounted } from 'vue'
+import { fetchFileSize } from '~/composables/useFileSize'
 
 export const LIST_SORT_OPTIONS = [
   { value: 'default',   label: 'Default' },
@@ -8,24 +9,24 @@ export const LIST_SORT_OPTIONS = [
   { value: 'size-asc',  label: 'Size ↑' },
 ] as const
 
-export function useListSort(images: readonly string[], buildSizeUrl: (img: string) => string) {
-  const sortBy = ref('default')
+export function useImageSizes(images: readonly string[], buildSizeUrl: (img: string) => string) {
   const sizes = ref(new Map<string, number>())
-  let loaded = false
 
-  async function loadSizes() {
-    if (loaded) return
-    loaded = true
-    await Promise.all(images.map(async (img) => {
-      try {
-        const res = await fetch(buildSizeUrl(img), { method: 'HEAD' })
-        const bytes = Number(res.headers.get('content-length'))
-        if (bytes > 0) sizes.value.set(img, bytes)
-      } catch {}
-    }))
-  }
+  onMounted(() => {
+    images.forEach(async (img) => {
+      const bytes = await fetchFileSize(buildSizeUrl(img))
+      if (bytes) sizes.value.set(img, bytes)
+    })
+  })
 
-  onMounted(loadSizes)
+  return sizes
+}
+
+export type ListSortOption = typeof LIST_SORT_OPTIONS[number]['value']
+
+export function useListSort(images: readonly string[], buildSizeUrl: (img: string) => string) {
+  const sortBy = ref<ListSortOption>('default')
+  const sizes = useImageSizes(images, buildSizeUrl)
 
   const sortedImages = computed(() => {
     const imgs = [...images]
