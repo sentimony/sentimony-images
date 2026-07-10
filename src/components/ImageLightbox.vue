@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
-import { ChevronLeft, ChevronRight, ExternalLink, ImageDown, X } from 'lucide-vue-next'
+import { Check, ChevronLeft, ChevronRight, Copy, ExternalLink, ImageDown, X } from 'lucide-vue-next'
 import { fetchFileSize, formatFileSize, formatSvgFileSize } from '~/composables/useFileSize'
 
 interface Props {
@@ -51,6 +51,7 @@ watch(() => props.src, (src) => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown)
   abortController.abort()
+  clearTimeout(copiedTimer)
 })
 
 async function loadFileSize(src: string) {
@@ -80,6 +81,16 @@ function onKeydown(e: KeyboardEvent) {
 function onOverlayClick(e: MouseEvent) {
   if (e.target === e.currentTarget) open.value = false
 }
+
+const copied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+async function copyPath() {
+  await navigator.clipboard.writeText(new URL(props.src, location.href).href)
+  copied.value = true
+  clearTimeout(copiedTimer)
+  copiedTimer = setTimeout(() => (copied.value = false), 1500)
+}
 </script>
 
 <template>
@@ -92,7 +103,8 @@ function onOverlayClick(e: MouseEvent) {
       >
         <button
           v-if="hasPrev"
-          class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
+          v-wave
+          class="absolute left-4 top-1/2 -translate-y-1/2 overflow-hidden rounded-full p-1 text-white/50 hover:text-white transition-colors z-10"
           aria-label="Previous"
           @click.stop="emit('prev')"
         >
@@ -101,7 +113,8 @@ function onOverlayClick(e: MouseEvent) {
 
         <div class="relative flex flex-col items-center gap-6 w-[90vw] max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8 shadow-2xl">
           <button
-            class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
+            v-wave
+            class="absolute top-4 right-4 overflow-hidden rounded-full p-1 text-white/60 hover:text-white transition-colors"
             aria-label="Close"
             @click="open = false"
           >
@@ -144,12 +157,21 @@ function onOverlayClick(e: MouseEvent) {
               Open original
               <ExternalLink class="size-3.5" :stroke-width="2" />
             </a>
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition-colors"
+              @click="copyPath"
+            >
+              <component :is="copied ? Check : Copy" class="size-3.5" :stroke-width="2" />
+              {{ copied ? 'Copied' : 'Copy image path' }}
+            </button>
           </div>
         </div>
 
         <button
           v-if="hasNext"
-          class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
+          v-wave
+          class="absolute right-4 top-1/2 -translate-y-1/2 overflow-hidden rounded-full p-1 text-white/50 hover:text-white transition-colors z-10"
           aria-label="Next"
           @click.stop="emit('next')"
         >
