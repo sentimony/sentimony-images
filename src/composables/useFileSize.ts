@@ -16,7 +16,9 @@ export async function fetchFileSize(url: string, signal?: AbortSignal): Promise<
   else await new Promise<void>((resolve) => waiting.push(resolve))
   try {
     if (signal?.aborted) return null
-    const res = await fetch(url, { method: 'HEAD', signal })
+    const init: RequestInit = { method: 'HEAD' }
+    if (signal) init.signal = signal
+    const res = await fetch(url, init)
     const bytes = Number(res.headers.get('content-length'))
     return bytes > 0 ? bytes : null
   } catch {

@@ -16,6 +16,8 @@ This is a **Digital Keeper** project for **Sentimony Records** - a Ukrainian psy
 Node `24.15.0` (`nvm use`), npm ≥ 11.12.0 (`engines` у package.json).
 ```bash
 npm install
+npm run setup    # Create required agent skill directories and empty env files when absent
+npm run skills   # Install/update the controlled agent skill set (also runs automatically after npm install)
 npm run dev      # Vite dev server (http://localhost:5173, --host)
 npm run build    # Production build -> dist/
 npm run preview  # Preview the production build
@@ -23,7 +25,8 @@ npm run deploy:stage   # Deploy preview (Netlify alias: stage)
 npm run deploy:prod    # Deploy to production
 npm run check:images  # Звірка img-папок з конфігами, read-only (авто-запуск після банера dev-сервера — плагін checkImages у vite.config.ts)
 npm run fix:configs   # Виправлення конфігів (вставки + переміщення за хронологією) з підтвердженням; --yes пропускає prompt
-npm run typecheck     # vue-tsc --noEmit (src + vite.config, strict + noUncheckedIndexedAccess/noUnusedLocals/noUnusedParameters); netlify/ має власний tsconfig: npx tsc -p netlify/tsconfig.json. Обидва extends tsconfig.base.json (спільні strict + noUncheckedIndexedAccess); scripts/*.mjs не типізуються (checkJs не вмикали)
+npm run typecheck     # vue-tsc --noEmit: Vue app (SFC + src/vite.config) через сумісний TypeScript 6 API
+npm run typecheck:ts7 # Native TypeScript 7: netlify. CI запускає обидві typecheck-команди; спільний base: strict + noUncheckedIndexedAccess/noFallthroughCasesInSwitch/noImplicitOverride/exactOptionalPropertyTypes; scripts/*.mjs не типізуються (checkJs вимкнено)
 npm run check:svg     # Монохромні SVG без fill="currentColor" (svg-icons + svg-images); пропонує виправити, --yes пропускає prompt
 npm run test:pages    # Playwright smoke: кожен роут із router.ts вантажиться (HTTP<400, без console.error/pageerror, h1 відрендерився). Стартує vite preview сам; треба npm run build перед цим. BASE_URL — тест уже запущеного сервера
 ```

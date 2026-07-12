@@ -25,6 +25,8 @@ jobs:
 
       - run: npm run typecheck
 
+      - run: npm run typecheck:ts7
+
       - run: npm run build
 
       - name: Install Playwright browser
