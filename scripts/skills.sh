@@ -43,11 +43,11 @@ npx skills add https://github.com/obra/superpowers -s \
   systematic-debugging \
   verification-before-completion \
   finishing-a-development-branch \
+  using-git-worktrees \
+  requesting-code-review \
   -a codex claude-code -y
   # using-superpowers
   # receiving-code-review \
-  # requesting-code-review \
   # dispatching-parallel-agents \
   # subagent-driven-development \
-  # using-git-worktrees \
   # writing-skills
