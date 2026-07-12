@@ -7,7 +7,7 @@ import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { SplinePointer } from 'lucide-vue-next'
 import { svgIcons } from '~/data/svg-icons'
 import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
-import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+import { NAME_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
 
 useHead({
   title: 'SVG Icons',
@@ -18,7 +18,8 @@ useHead({
 
 const { sortBy, sortedImages } = useListSort(
   svgIcons,
-  (img) => `/assets/img/svg-icons/${img}`
+  (img) => `/assets/img/svg-icons/${img}`,
+  { initialSort: 'name-asc' },
 )
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
@@ -32,7 +33,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'svg-icons')
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="LIST_SORT_OPTIONS" />
+      <SortSelect v-model="sortBy" :options="NAME_SORT_OPTIONS" />
     </template>
 
     <SvgItem

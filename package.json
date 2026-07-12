@@ -5,6 +5,7 @@
   "scripts": {
     "setup": "sh scripts/setup.sh",
     "skills": "sh scripts/skills.sh",
+    "preinstall": "npm run setup",
     "postinstall": "npm run skills",
     "check:images": "node scripts/check-images.mjs",
     "check:svg": "node scripts/check-svg-colors.mjs",

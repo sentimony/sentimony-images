@@ -5,9 +5,15 @@ import SortSelect from '~/components/SortSelect.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { TentTree } from 'lucide-vue-next'
-import { eventImages } from '~/data/event-images'
+import { eventImages, eventDates } from '~/data/event-images'
 import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
-import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+import { EVENT_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+
+const eventDateFor = (img: string) => {
+  const slug = img.replace(/(_[ab])?_xl\.jpg$/, '')
+  const date = eventDates[slug]
+  return date ? Date.parse(date) : undefined
+}
 
 useHead({
   title: 'Events',
@@ -18,7 +24,8 @@ useHead({
 
 const { sortBy, sortedImages } = useListSort(
   eventImages,
-  (img) => `/assets/img/events/${img}`
+  (img) => `/assets/img/events/${img}`,
+  { initialSort: 'date-desc', dateFor: eventDateFor },
 )
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
@@ -32,7 +39,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'events')
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="LIST_SORT_OPTIONS" />
+      <SortSelect v-model="sortBy" :options="EVENT_SORT_OPTIONS" />
     </template>
 
     <Item

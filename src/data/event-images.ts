@@ -1,3 +1,14 @@
+// Event dates come from sentimony-nuxt's db-export (db.events[].date), pinned
+// here as data so the page can sort by event date. Keyed by event slug; the
+// file name is `{slug}[_a|_b]_xl.jpg`, so its date is eventDates[slug].
+export const eventDates: Record<string, string> = {
+  'shift-space': '2008-11-01',
+  'alt-space':   '2009-11-21',
+  'water-marks': '2010-08-28',
+  'home-space':  '2010-11-13',
+  'five-years':  '2011-11-05',
+}
+
 export const eventImages = [
   // 2009-11-21 alt-space
   'alt-space_a_xl.jpg',

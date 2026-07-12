@@ -3,9 +3,6 @@
 # Add a line and re-run `npm run skills`.
 set -e
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-sh "$SCRIPT_DIR/setup.sh"
-
 # ANTHROPIC
 npx skills add https://github.com/anthropics/skills -s \
   frontend-design \

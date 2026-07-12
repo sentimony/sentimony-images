@@ -7,7 +7,7 @@ import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { PenTool } from 'lucide-vue-next'
 import { svgImages } from '~/data/svg-images'
 import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
-import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+import { NAME_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
 
 useHead({
   title: 'SVG Images',
@@ -18,7 +18,8 @@ useHead({
 
 const { sortBy, sortedImages } = useListSort(
   svgImages,
-  (img) => `/assets/img/svg-images/${img}`
+  (img) => `/assets/img/svg-images/${img}`,
+  { initialSort: 'name-asc' },
 )
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
@@ -32,7 +33,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'svg-images')
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="LIST_SORT_OPTIONS" />
+      <SortSelect v-model="sortBy" :options="NAME_SORT_OPTIONS" />
     </template>
 
     <SvgImageItem

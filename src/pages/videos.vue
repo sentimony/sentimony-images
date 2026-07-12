@@ -5,9 +5,15 @@ import SortSelect from '~/components/SortSelect.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { MonitorPlay } from 'lucide-vue-next'
-import { videoImages } from '~/data/video-images'
+import { videoImages, videoDates } from '~/data/video-images'
 import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
-import { LIST_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+import { VIDEO_SORT_OPTIONS, useListSort } from '~/composables/useListSort'
+
+const videoDateFor = (img: string) => {
+  const slug = img.replace(/_th\.jpg$/, '')
+  const date = videoDates[slug]
+  return date ? Date.parse(date) : undefined
+}
 
 useHead({
   title: 'Videos',
@@ -18,7 +24,8 @@ useHead({
 
 const { sortBy, sortedImages } = useListSort(
   videoImages,
-  (img) => `/assets/img/videos/${img.replace('_th.jpg', '_xl.jpg')}`
+  (img) => `/assets/img/videos/${img.replace('_th.jpg', '_xl.jpg')}`,
+  { initialSort: 'date-desc', dateFor: videoDateFor },
 )
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
@@ -32,7 +39,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'videos', true)
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="LIST_SORT_OPTIONS" />
+      <SortSelect v-model="sortBy" :options="VIDEO_SORT_OPTIONS" />
     </template>
 
     <Item
