@@ -30,7 +30,7 @@
 - Consumes: the shared compiler options inherited by `tsconfig.json` and `netlify/tsconfig.json`.
 - Produces: `noFallthroughCasesInSwitch: true` and `noImplicitOverride: true` for both compiler paths.
 
-- [ ] **Step 1: Run the failing structural check**
+- [x] **Step 1: Run the failing structural check**
 
 Run:
 
@@ -40,7 +40,7 @@ node -e "const c=require('./tsconfig.base.json').compilerOptions; if (c.noFallth
 
 Expected: FAIL with exit code `1` because both options are absent.
 
-- [ ] **Step 2: Enable `noFallthroughCasesInSwitch`**
+- [x] **Step 2: Enable `noFallthroughCasesInSwitch`**
 
 Add this option after `noUncheckedIndexedAccess` in `tsconfig.base.json`:
 
@@ -48,7 +48,7 @@ Add this option after `noUncheckedIndexedAccess` in `tsconfig.base.json`:
 "noFallthroughCasesInSwitch": true
 ```
 
-- [ ] **Step 3: Verify both compiler paths**
+- [x] **Step 3: Verify both compiler paths**
 
 Run:
 
@@ -59,7 +59,7 @@ npm run typecheck:ts7
 
 Expected: both commands exit `0`.
 
-- [ ] **Step 4: Enable `noImplicitOverride`**
+- [x] **Step 4: Enable `noImplicitOverride`**
 
 Add this option after `noFallthroughCasesInSwitch` in `tsconfig.base.json`:
 
@@ -67,7 +67,7 @@ Add this option after `noFallthroughCasesInSwitch` in `tsconfig.base.json`:
 "noImplicitOverride": true
 ```
 
-- [ ] **Step 5: Verify both compiler paths**
+- [x] **Step 5: Verify both compiler paths**
 
 Run:
 
@@ -78,7 +78,7 @@ npm run typecheck:ts7
 
 Expected: both commands exit `0`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tsconfig.base.json
@@ -97,7 +97,7 @@ git commit -m "chore: enable low-cost TypeScript strictness"
 - Consumes: optional `AbortSignal` passed to `fetchFileSize(url, signal?)`.
 - Produces: a `RequestInit` that omits `signal` when no signal exists; `exactOptionalPropertyTypes: true` for both compiler paths.
 
-- [ ] **Step 1: Verify the exact-optional failure**
+- [x] **Step 1: Verify the exact-optional failure**
 
 Run:
 
@@ -107,7 +107,7 @@ npx vue-tsc --noEmit --exactOptionalPropertyTypes
 
 Expected: FAIL with TS2769 at `src/composables/useFileSize.ts`, because `{ signal: undefined }` is not assignable to `RequestInit`.
 
-- [ ] **Step 2: Enable `exactOptionalPropertyTypes`**
+- [x] **Step 2: Enable `exactOptionalPropertyTypes`**
 
 Add this option after `noImplicitOverride` in `tsconfig.base.json`:
 
@@ -115,7 +115,7 @@ Add this option after `noImplicitOverride` in `tsconfig.base.json`:
 "exactOptionalPropertyTypes": true
 ```
 
-- [ ] **Step 3: Run the project typecheck to confirm RED**
+- [x] **Step 3: Run the project typecheck to confirm RED**
 
 Run:
 
@@ -125,7 +125,7 @@ npm run typecheck
 
 Expected: FAIL with the same TS2769 at `src/composables/useFileSize.ts:19`.
 
-- [ ] **Step 4: Fix the request initializer**
+- [x] **Step 4: Fix the request initializer**
 
 Replace the fetch call in `fetchFileSize` with:
 
@@ -135,7 +135,7 @@ if (signal) init.signal = signal
 const res = await fetch(url, init)
 ```
 
-- [ ] **Step 5: Verify both compiler paths**
+- [x] **Step 5: Verify both compiler paths**
 
 Run:
 
@@ -146,7 +146,7 @@ npm run typecheck:ts7
 
 Expected: both commands exit `0`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tsconfig.base.json src/composables/useFileSize.ts
@@ -165,7 +165,7 @@ git commit -m "chore: enable exact optional property types"
 - Consumes: existing npm scripts `typecheck` and `typecheck:ts7`.
 - Produces: CI execution of both compiler paths and matching project documentation.
 
-- [ ] **Step 1: Run the failing CI structural check**
+- [x] **Step 1: Run the failing CI structural check**
 
 Run:
 
@@ -175,7 +175,7 @@ rg -F -- '- run: npm run typecheck:ts7' .github/workflows/ci.yml
 
 Expected: FAIL with exit code `1` because CI does not invoke the native checker.
 
-- [ ] **Step 2: Add the native checker to CI**
+- [x] **Step 2: Add the native checker to CI**
 
 Add this step immediately after `npm run typecheck` in `.github/workflows/ci.yml`:
 
@@ -183,11 +183,11 @@ Add this step immediately after `npm run typecheck` in `.github/workflows/ci.yml
       - run: npm run typecheck:ts7
 ```
 
-- [ ] **Step 3: Update TypeScript documentation**
+- [x] **Step 3: Update TypeScript documentation**
 
 Update the `npm run typecheck` and `npm run typecheck:ts7` notes in `AGENTS.md` to state that shared strictness includes `noUncheckedIndexedAccess`, `noFallthroughCasesInSwitch`, `noImplicitOverride`, and `exactOptionalPropertyTypes`, and that CI runs both commands.
 
-- [ ] **Step 4: Verify the workflow and effective config**
+- [x] **Step 4: Verify the workflow and effective config**
 
 Run:
 
@@ -199,7 +199,7 @@ node -e "const c=require('./tsconfig.base.json').compilerOptions; for (const k o
 
 Expected: workflow line prints; inspection shows both leaf configs inherit all strictness options; structural check exits `0`.
 
-- [ ] **Step 5: Run full verification**
+- [x] **Step 5: Run full verification**
 
 Run:
 
@@ -214,7 +214,7 @@ git diff --check
 
 Expected: both typechecks and build exit `0`; all 9 smoke routes pass; hygiene grep and diff check print nothing.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .github/workflows/ci.yml AGENTS.md docs/superpowers/plans/2026-07-13-typescript-hardening.md
