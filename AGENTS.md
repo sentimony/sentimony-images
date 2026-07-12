@@ -16,6 +16,7 @@ This is a **Digital Keeper** project for **Sentimony Records** - a Ukrainian psy
 Node `24.15.0` (`nvm use`), npm ≥ 11.12.0 (`engines` у package.json).
 ```bash
 npm install
+npm run setup    # Create required agent skill directories and empty env files when absent
 npm run skills   # Install/update the controlled agent skill set (also runs automatically after npm install)
 npm run dev      # Vite dev server (http://localhost:5173, --host)
 npm run build    # Production build -> dist/

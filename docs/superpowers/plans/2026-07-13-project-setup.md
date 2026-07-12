@@ -16,6 +16,7 @@
 - Stop skill installation immediately if setup fails.
 - Do not execute real `npx skills add` commands during verification.
 - Code comments must be in English.
+- Preserve the side-by-side compiler layout: ordinary `typescript@^6.0.3` for `vue-tsc` and `@typescript/native` for TypeScript 7.
 
 ---
 
@@ -25,6 +26,7 @@
 - Create: `scripts/setup.sh`
 - Modify: `scripts/skills.sh`
 - Modify: `package.json`
+- Modify: `package-lock.json`
 - Modify: `AGENTS.md`
 - Modify: `docs/superpowers/plans/2026-07-13-project-setup.md`
 
@@ -32,7 +34,7 @@
 - Consumes: the filesystem path of `scripts/setup.sh` and standard POSIX utilities `dirname`, `mkdir`, and `touch`.
 - Produces: `npm run setup`; required project paths; a setup call before the first `npx skills add` in `scripts/skills.sh`.
 
-- [ ] **Step 1: Run the failing structural check**
+- [x] **Step 1: Run the failing structural check**
 
 Run:
 
@@ -44,7 +46,7 @@ test -f scripts/setup.sh \
 
 Expected: FAIL because `scripts/setup.sh` and the npm setup script do not exist.
 
-- [ ] **Step 2: Create the setup script**
+- [x] **Step 2: Create the setup script**
 
 Create `scripts/setup.sh`:
 
@@ -65,7 +67,7 @@ touch \
   "$PROJECT_ROOT/.env/.env.local"
 ```
 
-- [ ] **Step 3: Call setup before skill installation**
+- [x] **Step 3: Call setup before skill installation**
 
 Add this block immediately after `set -e` in `scripts/skills.sh`:
 
@@ -74,7 +76,7 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 sh "$SCRIPT_DIR/setup.sh"
 ```
 
-- [ ] **Step 4: Expose the manual npm command**
+- [x] **Step 4: Expose the manual npm command**
 
 Add this entry to `package.json` under `scripts`, immediately before `skills`:
 
@@ -88,7 +90,7 @@ Add this line to the command block in `AGENTS.md`:
 npm run setup    # Create required agent skill directories and empty env files when absent
 ```
 
-- [ ] **Step 5: Verify setup behavior in an isolated fixture**
+- [x] **Step 5: Verify setup behavior in an isolated fixture**
 
 Run:
 
@@ -110,7 +112,7 @@ rm -rf "$fixture"
 
 Expected: every command exits `0`; paths are created relative to the fixture project; the sentinel survives both runs.
 
-- [ ] **Step 6: Verify syntax and call ordering**
+- [x] **Step 6: Verify syntax and call ordering**
 
 Run:
 
@@ -126,7 +128,7 @@ git diff --check
 
 Expected: every command exits `0`; setup appears before the first skill installation; diff check prints nothing.
 
-- [ ] **Step 7: Run project verification**
+- [x] **Step 7: Run project verification**
 
 Run:
 
@@ -139,9 +141,9 @@ npm run test:pages
 
 Expected: both typechecks and build exit `0`; all 9 page smoke tests pass. Do not run `npm install`, because `postinstall` would invoke real skill installation.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
-git add scripts/setup.sh scripts/skills.sh package.json AGENTS.md docs/superpowers/plans/2026-07-13-project-setup.md
+git add scripts/setup.sh scripts/skills.sh package.json package-lock.json AGENTS.md docs/superpowers/plans/2026-07-13-project-setup.md
 git commit -m "chore: prepare project before skill installation"
 ```
