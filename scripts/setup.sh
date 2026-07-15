@@ -12,3 +12,6 @@ mkdir -p \
 touch \
   "$PROJECT_ROOT/.env/.env" \
   "$PROJECT_ROOT/.env/.env.local"
+
+echo "npx -y skillio -v" && npx -y skillio -v
+echo "npx -y skills -v" && npx -y skills -v

@@ -9,6 +9,12 @@ interface Props {
   hasPrev?: boolean
   hasNext?: boolean
   imgClass?: string
+  // Optional context date shown as its own line, e.g. "Release Date" / "Date Joined".
+  dateLabel?: string
+  dateValue?: string | undefined
+  // Optional id line shown right after the date, e.g. "Artist ID".
+  idLabel?: string
+  idValue?: string | undefined
 }
 
 const props = defineProps<Props>()
@@ -19,11 +25,38 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>('open', { required: true })
 const fileSize = ref<string | null>(null)
-const dimensions = ref<string | null>(null)
+const width = ref<number | null>(null)
+const height = ref<number | null>(null)
 
-const infoLabel = computed(() =>
-  [dimensions.value, fileSize.value].filter(Boolean).join(' · ')
+const resolution = computed(() =>
+  width.value && height.value ? `${width.value} × ${height.value} px` : null
 )
+
+const ratio = computed(() => {
+  if (!width.value || !height.value) return null
+  const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a)
+  const d = gcd(width.value, height.value)
+  return `${width.value / d}:${height.value / d}`
+})
+
+interface InfoRow {
+  label: string
+  value: string
+}
+
+// A row is present whenever its label applies; a missing value renders as "—".
+// The date/id rows only apply on pages that pass a label for them.
+const DASH = '—'
+
+const infoRows = computed<InfoRow[]>(() => {
+  const rows: InfoRow[] = []
+  if (props.dateLabel) rows.push({ label: props.dateLabel, value: props.dateValue || DASH })
+  if (props.idLabel) rows.push({ label: props.idLabel, value: props.idValue || DASH })
+  rows.push({ label: 'Resolution', value: resolution.value || DASH })
+  rows.push({ label: 'Ratio', value: ratio.value || DASH })
+  rows.push({ label: 'Size', value: fileSize.value || DASH })
+  return rows
+})
 
 // Abort in-flight HEAD requests on unmount so navigation doesn't log ERR_ABORTED.
 // Declared before the immediate watcher below, which may call loadFileSize right away.
@@ -38,13 +71,15 @@ watch(open, (isOpen) => {
   } else {
     document.removeEventListener('keydown', onKeydown)
     fileSize.value = null
-    dimensions.value = null
+    width.value = null
+    height.value = null
   }
 }, { immediate: true })
 
 watch(() => props.src, (src) => {
   fileSize.value = null
-  dimensions.value = null
+  width.value = null
+  height.value = null
   if (open.value && src) loadFileSize(src)
 })
 
@@ -63,7 +98,10 @@ async function loadFileSize(src: string) {
 
 function onImgLoad(e: Event) {
   const img = e.target as HTMLImageElement
-  if (img.naturalWidth) dimensions.value = `${img.naturalWidth}×${img.naturalHeight}`
+  if (img.naturalWidth) {
+    width.value = img.naturalWidth
+    height.value = img.naturalHeight
+  }
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -98,7 +136,8 @@ async function copyPath() {
     <Transition name="lightbox">
       <div
         v-if="open"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+        v-wave
+        class="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/80"
         @click="onOverlayClick"
       >
         <button
@@ -106,12 +145,17 @@ async function copyPath() {
           v-wave
           class="absolute left-4 top-1/2 -translate-y-1/2 overflow-hidden rounded-full p-1 text-white/50 hover:text-white transition-colors z-10"
           aria-label="Previous"
+          @pointerdown.stop
           @click.stop="emit('prev')"
         >
           <ChevronLeft class="size-10" :stroke-width="1.5" />
         </button>
 
-        <div class="relative flex flex-col items-center gap-6 w-[90vw] max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8 shadow-2xl">
+        <div
+          v-wave
+          class="relative flex flex-col items-center gap-6 w-[90vw] max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8 shadow-2xl"
+          @pointerdown.stop
+        >
           <button
             v-wave
             class="absolute top-4 right-4 overflow-hidden rounded-full p-1 text-white/60 hover:text-white transition-colors"
@@ -138,7 +182,13 @@ async function copyPath() {
           </p>
 
           <!-- Always rendered to keep dialog height stable while metadata loads -->
-          <p class="text-xs text-white/50 -mt-4 min-h-4">{{ infoLabel ? `Size: ${infoLabel}` : '' }}</p>
+          <dl class="text-xs text-white/50 -mt-4 min-h-20 space-y-0.5 text-center">
+            <div v-for="row in infoRows" :key="row.label">
+              <dt class="inline">{{ row.label }}:</dt>
+              {{ ' ' }}
+              <dd class="inline text-white/70">{{ row.value }}</dd>
+            </div>
+          </dl>
 
           <div class="flex items-center gap-6">
             <a
@@ -173,6 +223,7 @@ async function copyPath() {
           v-wave
           class="absolute right-4 top-1/2 -translate-y-1/2 overflow-hidden rounded-full p-1 text-white/50 hover:text-white transition-colors z-10"
           aria-label="Next"
+          @pointerdown.stop
           @click.stop="emit('next')"
         >
           <ChevronRight class="size-10" :stroke-width="1.5" />

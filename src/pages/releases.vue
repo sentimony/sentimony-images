@@ -3,11 +3,11 @@ import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import { RELEASE_SORT_OPTIONS, sortImages, useReleaseSort } from '~/composables/useImageSort'
 import Item from '~/components/Item.vue'
-import SortSelect from '~/components/SortSelect.vue'
+import SortToggle from '~/components/SortToggle.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { Disc3 } from 'lucide-vue-next'
-import { releaseImages } from '~/data/release-images'
+import { releaseImages, releaseDates } from '~/data/release-images'
 import { useImageNavigation, useLightboxImage } from '~/composables/useImageNavigation'
 import { useImageSizes } from '~/composables/useListSort'
 
@@ -24,6 +24,12 @@ const sortedReleaseImages = computed(() => sortImages(releaseImages, sortBy.valu
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedReleaseImages)
 const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'releases', true)
+
+const activeDate = computed(() => {
+  const key = activeKey.value
+  if (!key) return undefined
+  return releaseDates[key.replace('_th.jpg', '')]
+})
 </script>
 
 <template>
@@ -33,7 +39,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'releases', true)
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="RELEASE_SORT_OPTIONS" />
+      <SortToggle v-model="sortBy" :options="RELEASE_SORT_OPTIONS" />
     </template>
 
     <Item
@@ -49,6 +55,8 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'releases', true)
         v-model:open="lightboxOpen"
         :src="activeSrc"
         :title="activeTitle"
+        date-label="Release Date"
+        :date-value="activeDate"
         :has-prev="hasPrev"
         :has-next="hasNext"
         @prev="prev"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
-import SortSelect from '~/components/SortSelect.vue'
+import SortToggle from '~/components/SortToggle.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { ListMusic } from 'lucide-vue-next'
@@ -33,7 +33,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'playlists', true
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="NAME_SORT_OPTIONS" />
+      <SortToggle v-model="sortBy" :options="NAME_SORT_OPTIONS" />
     </template>
 
     <Item

@@ -3,17 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "sh scripts/clean.sh",
     "setup": "sh scripts/setup.sh",
     "skills": "sh scripts/skills.sh",
-    "preinstall": "npm run setup",
-    "postinstall": "npm run skills",
+    "dev": "npm run setup && npm run skills && vite --open",
     "check:images": "node scripts/check-images.mjs",
     "check:svg": "node scripts/check-svg-colors.mjs",
     "typecheck": "vue-tsc --noEmit",
     "typecheck:ts7": "node node_modules/@typescript/native/bin/tsc -p netlify/tsconfig.json",
     "test:pages": "node scripts/smoke-pages.mjs",
     "fix:configs": "node scripts/fix-configs.mjs",
-    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "deploy:stage": "npx -y dotenv-cli@11 -e .env/.env.local -e .env/.env -- npx -y netlify-cli@26 deploy --alias stage --context deploy-preview",
@@ -23,7 +22,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "@types/node": "^26.1.1",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue": "^6.0.8",
     "playwright": "^1.61.1",
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3",
@@ -33,9 +32,10 @@
   "dependencies": {
     "@unhead/vue": "^3.1.8",
     "lucide-vue-next": "^1.0.0",
+    "simple-icons": "^16.26.0",
     "v-wave": "^3.1.1",
     "vue": "^3.5.39",
-    "vue-router": "^5.1.0"
+    "vue-router": "^5.2.0"
   },
   "engines": {
     "node": ">=24.15.0",

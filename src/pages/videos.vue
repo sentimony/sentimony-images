@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
-import SortSelect from '~/components/SortSelect.vue'
+import SortToggle from '~/components/SortToggle.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { MonitorPlay } from 'lucide-vue-next'
@@ -30,6 +31,12 @@ const { sortBy, sortedImages } = useListSort(
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
 const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'videos', true)
+
+const activeDate = computed(() => {
+  const key = activeKey.value
+  if (!key) return undefined
+  return videoDates[key.replace(/_th\.jpg$/, '')]
+})
 </script>
 
 <template>
@@ -39,7 +46,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'videos', true)
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="VIDEO_SORT_OPTIONS" />
+      <SortToggle v-model="sortBy" :options="VIDEO_SORT_OPTIONS" />
     </template>
 
     <Item
@@ -55,6 +62,8 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'videos', true)
         v-model:open="lightboxOpen"
         :src="activeSrc"
         :title="activeTitle"
+        date-label="Release Date"
+        :date-value="activeDate"
         :has-prev="hasPrev"
         :has-next="hasNext"
         @prev="prev"

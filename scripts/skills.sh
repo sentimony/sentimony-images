@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-# Skills used by this project.
-# Add a line and re-run `npm run skills`.
 set -e
 
 # ANTHROPIC
@@ -28,8 +26,8 @@ npx skills add https://github.com/sentimony/skills -s \
   web-debug \
   vitest \
   typescript \
+  echarts \
   -a codex claude-code -y
-  # echarts \
 
 # SUPERPOWERS
 npx skills add https://github.com/obra/superpowers -s \
@@ -40,11 +38,12 @@ npx skills add https://github.com/obra/superpowers -s \
   systematic-debugging \
   verification-before-completion \
   finishing-a-development-branch \
-  using-git-worktrees \
-  requesting-code-review \
   -a codex claude-code -y
-  # using-superpowers
+  # using-git-worktrees \
   # receiving-code-review \
+  # requesting-code-review \
   # dispatching-parallel-agents \
   # subagent-driven-development \
   # writing-skills
+
+echo "npx skl ls" && npx skl ls

@@ -1,9 +1,11 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-// The ?img= query param holds the file name without extension; old links
-// with an extension still resolve because both sides are stripped.
-const stripExt = (name: string) => name.replace(/\.\w+$/, '')
+// The ?img= query param holds the bare slug: file name without its extension
+// and without the _th/_xl size suffix (e.g. `vorg-cyber-soul-chill`). Both the
+// param and the list items are reduced the same way, so older links that still
+// carry an extension or a _th/_xl suffix keep resolving.
+const stripKey = (name: string) => name.replace(/\.\w+$/, '').replace(/_(th|xl)$/, '')
 
 export function useImageNavigation(
   items: Ref<readonly string[]> | ComputedRef<readonly string[]>
@@ -14,8 +16,8 @@ export function useImageNavigation(
   const activeKey = computed(() => {
     const q = route.query.img
     if (typeof q !== 'string') return undefined
-    const slug = stripExt(q)
-    return items.value.find(item => stripExt(item) === slug)
+    const slug = stripKey(q)
+    return items.value.find(item => stripKey(item) === slug)
   })
 
   const activeIndex = computed(() => {
@@ -35,12 +37,12 @@ export function useImageNavigation(
   })
 
   function open(key: string) {
-    router.replace({ query: { ...route.query, img: stripExt(key) } })
+    router.replace({ query: { ...route.query, img: stripKey(key) } })
   }
 
   function goTo(idx: number) {
     const target = items.value[idx]
-    if (target) router.replace({ query: { ...route.query, img: stripExt(target) } })
+    if (target) router.replace({ query: { ...route.query, img: stripKey(target) } })
   }
 
   function prev() {

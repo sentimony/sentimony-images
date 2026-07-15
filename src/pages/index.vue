@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue'
-import { ArrowUpRight, Github } from 'lucide-vue-next'
+import { ArrowUpRight } from 'lucide-vue-next'
+import SiGithub from '~/components/SiGithub.vue'
+import Description from '~/components/ui/Description.vue'
 
 useHead({
   title: 'Home',
@@ -12,7 +14,7 @@ useHead({
 
 <template>
   <div class="flex items-center justify-center">
-    <div class="text-center my-16 px-4">
+    <div class="text-center my-8 px-4">
 
       <img src="/assets/img/svg-icons/sentimony-records-logo-v3.2.svg?01" alt="Sentimony Records logo svg v3.2" width="80" height="80" class="mx-auto mb-4 brightness-0 invert" />
 
@@ -20,9 +22,14 @@ useHead({
         Sentimony<br>Records
       </h1>
 
-      <h2 class="text-lg text-green-200 mb-16 font-Julius tracking-widest uppercase">
+      <h2 class="text-lg text-green-200 mb-8 font-Julius tracking-widest uppercase">
         Psychedelic Music Label
       </h2>
+
+      <Description>
+        <p>"Digital Keeper" is a repository for the content files of Sentimony Records, a psychedelic music label - release artworks, artist photos, event flyers, video covers, logos, SVG icons and website backgrounds.</p>
+        <p>Built with Vue, Vite &amp; Tailwind. The code is open - feel free to explore it on <a href="https://github.com/sentimony/sentimony-images" class="text-green-500 underline hover:text-green-400" target="_blank" rel="noopener noreferrer" title="Opens in a new tab"><SiGithub class="inline-block size-4 mr-0.5 align-[-0.2em]" />GitHub<ArrowUpRight class="inline-block size-4 ml-0.5 align-[-0.2em]" /></a>.</p>
+      </Description>
 
       <a
         href="https://sentimony.com"
@@ -31,16 +38,9 @@ useHead({
         v-wave
         class="inline-flex items-center gap-2 h-auto rounded-full px-8 py-3 text-lg text-white transition-colors duration-300 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
       >
-        Visit Website
+        sentimony.com
         <ArrowUpRight class="size-5" />
       </a>
-
-      <div class="mt-16 mb-8 max-w-xl mx-auto text-left backdrop-blur-xs rounded-xl ring-1 ring-white/10 bg-white/5 overflow-hidden py-4 text-sm flex flex-col gap-4">
-        <div class="px-4 text-white text-base indent-5 [&>p]:mb-4 [&>p:last-child]:mb-0">
-          <p>"Digital Keeper" is a repository for the content files of Sentimony Records, a psychedelic music label - release artworks, artist photos, event flyers, video covers, logos, SVG icons and website backgrounds.</p>
-          <p>Built with Vue, Vite &amp; Tailwind. The code is open - feel free to explore it on <a href="https://github.com/sentimony/sentimony-images" class="text-green-500 underline hover:text-green-400" target="_blank" rel="noopener noreferrer" title="Opens in a new tab"><Github class="inline-block size-4 mr-0.5 align-[-0.2em]" />GitHub<ArrowUpRight class="inline-block size-4 ml-0.5 align-[-0.2em]" /></a>.</p>
-        </div>
-      </div>
 
     </div>
   </div>

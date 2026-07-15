@@ -5,6 +5,9 @@
 - **Update this file**: Always update CLAUDE.md when new context is discovered or tasks are completed. **Keep it ≤128 lines** — trim stale notes when adding new ones
 - **Thinking process**: User appreciates detailed analysis and thinking process - share insights when working on complex tasks
 
+## Workflow
+- **No git worktrees**: Do not use git worktrees in this project (no `git worktree`, no worktree-based skills). Work in the main checkout.
+
 ## Project Overview
 This is a **Digital Keeper** project for **Sentimony Records** - a Ukrainian psychedelic music label founded in 2007.
 
@@ -46,7 +49,7 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - **Manual routing** in `src/router.ts` (one explicit route per page, no file-based routing). New page = create `src/pages/X.vue`, register it in the router, add a menu item in `src/components/AppHeader.vue`.
 - `~/` and `@/` both alias `src/` (vite.config). **No component auto-import** — import every component explicitly.
 - Code style: 2-space indent, single quotes, no semicolons; components PascalCase, composables `useXxx`, data/utility modules kebab-case.
-- No `src/components/ui/` layer. `ImageLightbox` is hand-rolled (`Teleport` + `Transition`, dark overlay + glass surface), no Dialog/UI dependency. Gotcha: його keydown-слухач (Esc/стрілки) і завантаження розміру живуть у `watch(open, …, { immediate: true })` — `immediate` обов'язковий, бо з deep-link `?img=` лайтбокс монтується вже відкритим.
+- `src/components/ui/` holds hand-rolled presentational primitives (no UI library): `Description.vue` (glass panel wrapping the page description slot, used by `ImagePageLayout` and `index.vue`). `ImageLightbox` is hand-rolled (`Teleport` + `Transition`, dark overlay + glass surface), no Dialog/UI dependency. Gotcha: його keydown-слухач (Esc/стрілки) і завантаження розміру живуть у `watch(open, …, { immediate: true })` — `immediate` обов'язковий, бо з deep-link `?img=` лайтбокс монтується вже відкритим.
 - Image grids: item components (`Item`, `SvgItem`, `SvgImageItem`) call `preventDefault()` on plain left-click and emit `@select` — a page rendering them **must** listen to `@select` and render `<ImageLightbox>`, else the click is dead. All image pages (releases, artists, svg-icons, svg-images, backgrounds, events, playlists, videos) wire this up. Cmd/Ctrl+click still opens the original in a new tab.
 - Titles: `app.vue` sets `titleTemplate: '%s · Digital Keeper'`; each page passes only its bare name (e.g. `'Releases'`); `NotFound.vue` overrides the template.
 - Image pages share `ImagePageLayout.vue` (wrapper + h1/icon + slots: description/sort/default grid/lightbox) і generic `SortSelect` (`generic="T extends string"`); lightbox src/title через `useLightboxImage` (useImageNavigation.ts).
@@ -89,10 +92,11 @@ Inline `// NNN slug (role)` comments in `artist-images.ts` mirror sentimony-nuxt
 - Gotcha: `releases[].artists` sometimes uses a different slug than the artist's real `artists[].slug` (dashes dropped, alias name) — e.g. `ers`→`e-r-s`, `alientime`→`alien-time`, `ka`→`ka-art`. Such artists silently fall to the alphabetical tail unless aliased by hand when recomputing.
 - Manual overrides feed the recompute: `releases[].artists`/`db.events` lineups sometimes miss real credits (compiler DJs, co-organizers) the curator knows about but that never made it into sentimony-nuxt's data. These are injected as extra slugs on a specific release/event date before numbering runs (e.g. `va-true-story` compiled-by `iorlovskyi`+`zea`; `shift-space` co-organizer `hagen`), so the artist's number reflects their true first-appearance date, not a later DB-visible one.
 - No script commits this numbering to the repo yet — it was computed by hand once (session-local scripts, not checked in). Recompute from `sentimony-nuxt/data/sentimony-db-export.json` (`releases` + `events` + `artists`) plus the manual-override list above if the catalog changes.
+- `artist-images.ts` also exports three derived maps used by the Artists page, all regenerated from the file's own comments / the db-export — keep in sync when the catalog changes: `artistsWithoutImages` (slugs of `// 'slug'` commented artists with no portrait, shown as placeholder cards under the "All" toggle), `artistDates` (slug→first-appearance date, covers both portrait and placeholder artists; drives the Date Joined sort), and `artistIds` (slug→`category_id` from `db.artists[slug]`, shown as "Artist ID" in the lightbox; `ka`→`ka-art` aliased, `not in artist db` artists omitted). The Artists page weaves portrait + placeholder artists into one sorted list; the lightbox navigates portrait artists only.
 
 ## Key Files
-- `src/data/release-images.ts` - Release images sorted by date (~101 releases: 2007-2026)
-- `src/data/artist-images.ts` - Artist images sorted by first appearance (~115 artists)
+- `src/data/release-images.ts` - Release images sorted by date (~101 releases: 2007-2026); also exports `releaseDates` (slug→date, from the trailing `// YYYY-MM-DD` comments) for the lightbox Release Date line
+- `src/data/artist-images.ts` - Artist images sorted by first appearance (~102 with portraits); also exports `artistsWithoutImages`, `artistDates`, `artistIds` (see Artist Numbering)
 
 ## Artists Without Release Connection
 `astrocat`, `gribessa`, `tairam` — origin unknown (not found in tracklistCompact/creditsCompact). `makus` — mastering engineer, appears in credits as service role.

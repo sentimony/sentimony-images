@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import Item from '~/components/Item.vue'
-import SortSelect from '~/components/SortSelect.vue'
+import SortToggle from '~/components/SortToggle.vue'
 import ImageLightbox from '~/components/ImageLightbox.vue'
 import ImagePageLayout from '~/components/ImagePageLayout.vue'
 import { TentTree } from 'lucide-vue-next'
@@ -30,6 +31,12 @@ const { sortBy, sortedImages } = useListSort(
 
 const { lightboxOpen, activeKey, hasPrev, hasNext, open, prev, next } = useImageNavigation(sortedImages)
 const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'events')
+
+const activeDate = computed(() => {
+  const key = activeKey.value
+  if (!key) return undefined
+  return eventDates[key.replace(/(_[ab])?_xl\.jpg$/, '')]
+})
 </script>
 
 <template>
@@ -39,7 +46,7 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'events')
     </template>
 
     <template #sort>
-      <SortSelect v-model="sortBy" :options="EVENT_SORT_OPTIONS" />
+      <SortToggle v-model="sortBy" :options="EVENT_SORT_OPTIONS" />
     </template>
 
     <Item
@@ -55,6 +62,8 @@ const { activeSrc, activeTitle } = useLightboxImage(activeKey, 'events')
         v-model:open="lightboxOpen"
         :src="activeSrc"
         :title="activeTitle"
+        date-label="Event Date"
+        :date-value="activeDate"
         :has-prev="hasPrev"
         :has-next="hasNext"
         @prev="prev"
