@@ -22,7 +22,7 @@ useHead({
         Sentimony<br>Records
       </h1>
 
-      <h2 class="text-lg text-green-200 mb-8 font-Julius tracking-widest uppercase">
+      <h2 class="text-lg text-green-200 mb-4 font-Julius tracking-widest uppercase">
         Psychedelic Music Label
       </h2>
 

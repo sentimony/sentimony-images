@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Applies the safe fixes that check-images.mjs finds in the image configs
-// (src/data/*.ts): inserting new files and moving entries into chronological
+// (app/data/*.ts): inserting new files and moving entries into chronological
 // order. Shows the plan and asks for confirmation (--yes / -y skips the prompt).
 // Never deletes entries whose files are missing on disk (the file may have
 // been renamed) — those stay recommendations. Exits 1 if applying a fix fails.

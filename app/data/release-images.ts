@@ -98,8 +98,8 @@ export const releaseImages = [
   'syned-brain-dementor-mysterium-tremendum_th.jpg', // 2025-07-25
   'gaz-mask-12-years_th.jpg', // 2025-12-05
   'alien-immigrant-plant-medicine_th.jpg', // 2026-06-23
-  'frog-prog-songs-of-buffo_th.jpg', // 2026-07-03 UNRELEASED
-  'vorg-cyber-soul-chill_th.jpg', // 2026-07-17 UNRELEASED
+  'frog-prog-songs-of-buffo_th.jpg', // 2026-07-17 UNRELEASED
+  'vorg-cyber-soul-chill_th.jpg', // 2026-07-31 UNRELEASED
 ]
 
 // Release date per slug, from the trailing `// YYYY-MM-DD` comments above.

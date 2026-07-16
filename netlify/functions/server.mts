@@ -2,7 +2,7 @@
 // Real files are served by the CDN before redirects, so every request landing here is either
 // a cold load of an SPA route (200) or a miss (404, logged). Logs: Netlify -> Logs -> Functions.
 
-// Keep in sync with the routes in src/router.ts
+// Keep in sync with the routes in app/router.ts
 const SPA_ROUTES = new Set([
   '/',
   '/releases',

@@ -6,9 +6,9 @@
     "noUnusedParameters": true,
     "types": ["vite/client"],
     "paths": {
-      "~/*": ["./src/*"],
-      "@/*": ["./src/*"]
+      "~/*": ["./app/*"],
+      "@/*": ["./app/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+  "include": ["app/**/*.ts", "app/**/*.vue", "vite.config.ts"]
 }

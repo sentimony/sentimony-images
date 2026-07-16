@@ -20,7 +20,7 @@ function checkImages(): Plugin {
   }
 }
 
-const srcDir = fileURLToPath(new URL('./src', import.meta.url))
+const srcDir = fileURLToPath(new URL('./app', import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({

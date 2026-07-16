@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 
-// Keep in sync with src/router.ts (catch-all NotFound is excluded on purpose).
+// Keep in sync with app/router.ts (catch-all NotFound is excluded on purpose).
 const ROUTES = [
   '/',
   '/releases',

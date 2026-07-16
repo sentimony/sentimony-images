@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Compares files in public/assets/img against the image config arrays in
-// src/data/*.ts and reports what to add and where. Read-only: recommendations
+// app/data/*.ts and reports what to add and where. Read-only: recommendations
 // only, always exits 0. Fixes are applied by scripts/fix-configs.mjs
 // (npm run fix:configs), which imports the shared logic from here.
 // Release data: site API -> fallback to the export in the sibling sentimony-nuxt repo.
@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const IMG_DIR = join(root, 'public/assets/img')
-export const DATA_DIR = join(root, 'src/data')
+export const DATA_DIR = join(root, 'app/data')
 
 const API_URL = 'https://sentimony.com/api/releases'
 const DB_FALLBACK = resolve(root, '../sentimony-nuxt/data/sentimony-db-export.json')
