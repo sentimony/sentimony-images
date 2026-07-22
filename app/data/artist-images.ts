@@ -124,7 +124,7 @@ export const artistImages = [
 
   // 2011-01-10 va-tempo-syndicate
   // 'boggy-elf', // 069 boggy-elf
-  'hagen-01_xl.jpg', // 029 hagen
+  'hagen-01_th.jpg', // 029 hagen
   'hypnotriod-01_th.jpg', // 059 hypnotriod
   'flooting-grooves-01_th.jpg', // 043 flooting-grooves
   'sygnals-01_th.jpg', // 070 sygnals

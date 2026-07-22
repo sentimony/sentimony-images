@@ -32,9 +32,9 @@
     "vue-tsc": "^3.3.7"
   },
   "dependencies": {
-    "@unhead/vue": "^3.1.8",
+    "@unhead/vue": "^3.2.1",
     "lucide-vue-next": "^1.0.0",
-    "simple-icons": "^16.26.0",
+    "simple-icons": "^16.27.0",
     "v-wave": "^3.1.1",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"

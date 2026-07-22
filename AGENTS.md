@@ -41,6 +41,11 @@ Deploy auth: токен у `.env/.env.local` (`NETLIFY_AUTH_TOKEN`); dotenv-cli 
 - `fix-configs.mjs` імпортує логіку з check-images.mjs, показує план і чекає підтвердження (`--yes`/`-y` пропускає; не-TTY без `--yes` нічого не змінює). Застосовує лише безпечні правки (insert/move, по одній з повторним аналізом), exit 1 при збої запису. Артисти вставляються в кінець групи свого першого релізу (`// дата slug`); якщо групи нема — лише рекомендація. Записи без файла та дублікати НЕ видаляє — лише рекомендує. Коментар-дата releases регенерується (`UNRELEASED` за coming_soon), інлайн-коментарі artists зберігаються
 - Дані релізів: `https://sentimony.com/api/releases` -> fallback `../sentimony-nuxt/data/sentimony-db-export.json` -> без даних пропускає хронологію. Поле `releases[].artists` (рядок зі slug через кому) дає першу появу артиста без парсингу HTML. Дати в коментарях конфігів можуть бути застарілі — джерело істини API
 
+## create-th / create-og (scripts/, macOS)
+- `sh scripts/create-th.sh <a_xl.jpg> [more…] [-q 69] [-f]` — `_th.jpg` поруч, довша сторона 240px, пропорції зберігаються (`sips -Z`). `sips`-only, без залежностей
+- `sh scripts/create-og.sh <a_xl.jpg> [more…] [-c|-t|-b [±N]] [-q 69] [-f]` — 1200×630 `_og.jpg` (cover+crop через ImageMagick, `brew install imagemagick`). Кроп `-c` center (деф) / `-t` top / `-b` bottom + опційний офсет % (`-N` вниз, `+N` вгору); resize→crop у два кроки через temp `.miff`, тож результат завжди рівно 1200×630
+- Обидва: приймають кілька джерел (не-`_xl.jpg` з glob тихо пропускаються), `-q` якість (деф 69), `-f` перезапис; наприкінці `open -a ImageOptim` на всі результати (async, застосунок закрити вручну). Ці скрипти навмисно НЕ в `package.json` — прапорці конфліктують з парсером npm
+
 ## Tech Stack
 Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4 · lucide-vue-next · @unhead/vue · v-wave. No UI component library (shadcn-vue/Reka UI removed) — `ui/`-style components are hand-rolled.
 

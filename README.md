@@ -29,6 +29,23 @@ npm run deploy:stage
 npm run deploy:prod
 ```
 
+### Images
+Generate `_th.jpg` thumbnails (longest side 240px, aspect ratio preserved) next to one or more `_xl.jpg` (macOS `sips`):
+```bash
+sh scripts/create-th.sh public/assets/img/artists/hagen-01_xl.jpg -q 69 -f
+sh scripts/create-th.sh public/assets/img/events/*_xl.jpg -q 69 -f   # batch
+```
+Generate 1200×630 `_og.jpg` (Open Graph) next to one or more `_xl.jpg` (requires `brew install imagemagick`):
+```bash
+sh scripts/create-og.sh public/assets/img/artists/hagen-01_xl.jpg -t -10 -q 69 -f
+```
+Both scripts accept multiple sources (non-`_xl.jpg` args from a `dir/*` glob are skipped). `-q` sets JPEG quality (default 69), `-f` overwrites existing files. `create-og.sh` crop: `-c` center (default), `-t` top, `-b` bottom, each accepting an optional vertical offset in % (`-N` moves the crop down, `+N` up — e.g. `-t -10` starts 10% below the top edge).
+
+Both scripts hand the results to [ImageOptim](https://imageoptim.com) (`open -a ImageOptim …`) for a further ~5% lossless saving — it optimizes in place; quit the app manually when done. To re-run ImageOptim over every stored JPEG at once:
+```bash
+open -a ImageOptim public/assets/img/*/*.jpg
+```
+
 ### Skills
 * [scripts/skills.sh](scripts/skills.sh)
 
