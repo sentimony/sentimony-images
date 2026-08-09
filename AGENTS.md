@@ -1,11 +1,12 @@
-# Claude Code Context for Sentimony Images
+# Agent Context for Sentimony Images
 
 ## Communication
 - **Language**: Ukrainian (українська мова)
-- **Update this file**: Always update CLAUDE.md when new context is discovered or tasks are completed. **Keep it ≤128 lines** — trim stale notes when adding new ones
+- **Update this file**: `AGENTS.md` holds the context for every agent; `CLAUDE.md` is a one-line `@AGENTS.md` import — edit AGENTS.md, never duplicate into CLAUDE.md. Always update it when new context is discovered or tasks are completed. **Keep it ≤128 lines** — trim stale notes when adding new ones
 - **Thinking process**: User appreciates detailed analysis and thinking process - share insights when working on complex tasks
 
 ## Workflow
+- **Branches**: default branch is `main` (GitHub default + `origin/HEAD`). 2026-08-11 cleanup: `master` deleted (fully merged) plus five abandoned experiments (`Experiment-1`, `shadcn-overlays-and-lightbox`, `task4/A`, `task4/B`, `migrate-vite` — og-optimizer, reverse sort, shadcn/Reka UI). Netlify production branch switched to `main` too. Gotcha: `netlify api updateSite` silently ignores a partial `build_settings.repo_branch` and 422s on a partial `repo` — send the whole `repo` object (provider/repo_type/repo_url/repo_path/installation_id/cmd/dir) with only the branch changed
 - **No git worktrees (hard rule)**: Never run `git worktree add`, never use worktree-based skills (no `isolation: "worktree"`), never create isolated copies of the repo. All work — edits, tests, builds, commits — happens in the main checkout only. If a worktree already exists, do not commit from it or cherry-pick its stale branches; remove it with `git worktree remove` after confirming it holds no unmerged work.
 
 ## Project Overview
@@ -21,7 +22,8 @@ Node `24.15.0` (`nvm use`), npm ≥ 11.12.0 (`engines` у package.json).
 npm install
 npm run setup    # Create required agent skill directories and empty env files when absent
 npm run skills   # Install/update the controlled agent skill set (also runs automatically after npm install)
-npm run dev      # Vite dev server (http://localhost:5173, --host)
+npm run dev      # Vite dev server (http://localhost:5173; no --host — додай сам для доступу з LAN)
+npm run clean    # skillio rm + rm -rf node_modules (повне перевстановлення: clean -> install)
 npm run build    # Production build -> dist/
 npm run preview  # Preview the production build
 npm run deploy:stage   # Deploy preview (Netlify alias: stage)
@@ -61,7 +63,7 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 - `ImagePageLayout` grid: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-6` (рівно 6 карток у рядку на desktop), sort-select по правому краю контейнера (`max-w-7xl`). Gotcha: item-компоненти (`Item`/`SvgItem`/`SvgImageItem`) рендерять лейбл розміру завжди-присутнім span із `min-h-4` (не `v-if`) — резервує висоту, щоб async-HEAD не давав layout-shift; той самий патерн у ImageLightbox. Не міняй на `v-if`.
 - Lightbox URL: `?img=` містить **bare slug** без розширення і без `_th`/`_xl`-суфікса (`stripKey` в useImageNavigation зрізає обидва); `activeKey` шукає повний файл у списку сторінки, старі лінки з `.jpg`/`.svg`/`_th` теж резолвляться.
 - Розміри файлів: jpg — `formatFileSize` (KB/MB), svg — `formatSvgFileSize` (`6477 B` / `58943 B (58 KB)` від 10 KB).
-- Composables: `useImageSort` (`sortImages()` + size map, releases/artists), `useListSort`/`useImageSizes`, `useImageNavigation`, `useFileSize`. Усі 8 image-сторінок мають сортування за розміром (HEAD content-length); роутів у router.ts 9 (+ index).
+- Composables: `useImageSort` (`sortImages()` + size map, releases/artists), `useListSort`/`useImageSizes`, `useImageNavigation`, `useFileSize`. Усі 8 image-сторінок мають сортування за розміром (HEAD content-length); у router.ts 9 роутів (index + 8 image-сторінок) плюс catch-all NotFound.
 - Images: `public/assets/img/<folder>/`, thumbs `_th.jpg`, full-size `_xl.jpg`. Gotcha: grid item-компоненти (`Item`/`SvgItem`/`SvgImageItem`) навмисно вантажать `_xl` у сітці (`Item.vue`: `image.replace('_th.jpg','_xl.jpg')`) — не "виправляти" назад на `_th`. Конфіги в `app/data/*.ts` тримають `_th`-імена; `_xl` виводиться на льоту.
 - Image config arrays live in `app/data/*.ts`, not in pages — new page with images = data file in `app/data/` + entry in `PAGES` of `scripts/check-images.mjs`.
 - SPA fallback: `/* /.netlify/functions/server 200` в `public/_redirects` → `netlify/functions/server.mts`: логує промахи `[404] [BOT|USER] ip => path` (Netlify → Logs → Functions, 24h), віддає shell — 200 для відомих маршрутів, справжній 404 інакше. Нова сторінка = додати шлях у `SPA_ROUTES` функції (sync із `app/router.ts`). Реальні файли йдуть з CDN, функцію не чіпають.
@@ -111,11 +113,11 @@ Inline `// NNN slug (role)` comments in `artist-images.ts` mirror sentimony-nuxt
 ~124 artists appear in releases but lack images — kept as `// 'artist-slug' (date release-slug)` comments in `artist-images.ts` for future reference; not duplicated here.
 
 ## Future Tasks
-- [ ] Add images for missing ~80 artists
+- [ ] Add images for the ~124 missing artists
 - [ ] Verify astrocat, gribessa, tairam origin
 - [ ] Consider separate arrays for artwork/mastering roles
 - [ ] check-images: кешувати відповідь API у `.cache/` (gitignored) як офлайн-fallback замість читання export із сусіднього репо
 
 ## CI
-`.github/workflows/ci.yml` (push у master + PR): `npm ci` → typecheck → build → install chromium → `test:pages`. `timeout-minutes: 10`, concurrency скасовує застарілі рани.
+`.github/workflows/ci.yml` (push у main + PR): `npm ci` → typecheck → build → install chromium → `test:pages`. `timeout-minutes: 10`, concurrency скасовує застарілі рани.
 - `scripts/smoke-pages.mjs`: `ROUTES` — **третє** місце синку роутів (з `app/router.ts` + `SPA_ROUTES` у server.mts). Нова сторінка = додати шлях у всі три. Запускає vite напряму (не через npx), щоб kill не лишав zombie на порту.
