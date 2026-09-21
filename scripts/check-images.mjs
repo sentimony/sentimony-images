@@ -3,18 +3,23 @@
 // app/data/*.ts and reports what to add and where. Read-only: recommendations
 // only, always exits 0. Fixes are applied by scripts/fix-configs.mjs
 // (npm run fix:configs), which imports the shared logic from here.
-// Release data: site API -> fallback to the export in the sibling sentimony-nuxt repo.
+// Release data: catalog YAML in the sibling sentimony-nuxt repo -> fallback to the site API.
 
+import { spawnSync } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
+import { createInterface } from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const IMG_DIR = join(root, 'public/assets/img')
 export const DATA_DIR = join(root, 'app/data')
 
+// sentimony-db.yml is the catalog source of truth, so it wins over the API: the API
+// serves the last *deployed* catalog and lags behind unsynced local edits. (The JSON
+// export next to the YAML is a gitignored build artifact — never read it.)
+const CATALOG_PATH = resolve(root, '../sentimony-nuxt/server/data/sentimony-db.yml')
 const API_URL = 'https://sentimony.com/api/releases'
-const DB_FALLBACK = resolve(root, '../sentimony-nuxt/data/sentimony-db-export.json')
 
 // thumbs: config lists only *_th.jpg; _xl/_og siblings live next to them on disk
 export const PAGES = [
@@ -71,21 +76,23 @@ function parseConfigArray(filePath, arrayName) {
   return { startLine: start + 1, entries, headers }
 }
 
-// --- Release data: API -> local export -> nothing -----------------------------
+// --- Release data: local catalog -> API -> nothing -----------------------------
 
-// Both the API (firebase mode) and the export may return an object instead of an array
+// Both the catalog and the API (firebase mode) may hold an object instead of an array
 const asList = (v) => Array.isArray(v) ? v : Object.values(v ?? {})
 
 export async function loadReleaseData() {
   try {
-    // short timeout: this runs on dev server startup and the fallback is local and fast
+    // dynamic import: a missing `yaml` falls into the catch instead of breaking dev startup
+    const { parse } = await import('yaml')
+    const db = parse(readFileSync(CATALOG_PATH, 'utf8'))
+    return { source: 'локальний каталог sentimony-db.yml (sentimony-nuxt)', releases: asList(db.releases) }
+  } catch { /* no sibling repo checkout (CI) or no yaml — fall back to the API */ }
+  try {
+    // short timeout: this runs on dev server startup and must not stall the banner
     const res = await fetch(API_URL, { signal: AbortSignal.timeout(3_000) })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return { source: 'API', releases: asList(await res.json()) }
-  } catch { /* offline or API down — try the local export */ }
-  try {
-    const db = JSON.parse(readFileSync(DB_FALLBACK, 'utf8'))
-    return { source: 'локальний export (sentimony-nuxt)', releases: asList(db.releases) }
+    return { source: 'API (задеплоєний каталог)', releases: asList(await res.json()) }
   } catch {
     return null
   }
@@ -299,6 +306,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
 
 // --- Report --------------------------------------------------------------------
 
+// Returns whether any finding can be auto-fixed, so the caller can offer fix-configs
 export function printReport(idx, data, { hint }) {
   const report = []
   let fixable = false
@@ -317,11 +325,42 @@ export function printReport(idx, data, { hint }) {
     console.log(report.join('\n\n') + '\n')
     if (hint && fixable) console.log(`Або запустіть ${bold('npm run fix:configs')} для авто-виправлення\n`)
   }
+  return fixable
+}
+
+// --- Prompt (shared with fix-configs.mjs) -------------------------------------
+
+export async function confirm(question, { assumeYes = false } = {}) {
+  if (assumeYes) return true
+  if (!process.stdin.isTTY) {
+    console.log(dim('Не інтерактивний термінал — пропущено. Запустіть з --yes для застосування.'))
+    return false
+  }
+  const rl = createInterface({ input: process.stdin, output: process.stdout })
+  const answer = (await rl.question(`${question} [y/N] `)).trim().toLowerCase()
+  rl.close()
+  return answer === 'y' || answer === 'yes'
 }
 
 // Run only as an entry point — fix-configs.mjs imports from here without side effects
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  // --no-prompt: the vite dev plugin runs us with vite owning stdin, so a readline
+  // here would fight vite's own one; it offers the `f` shortcut instead
+  const noPrompt = process.argv.includes('--no-prompt')
   loadReleaseData()
-    .then((data) => printReport(data ? buildIndexes(data.releases) : null, data, { hint: true }))
+    .then(async (data) => {
+      // no prompt without a TTY (CI, piped output) — keep the textual hint there
+      const interactive = !noPrompt && process.stdin.isTTY
+      const fixable = printReport(data ? buildIndexes(data.releases) : null, data, { hint: !interactive && !noPrompt })
+      if (!fixable) return
+      if (noPrompt) {
+        console.log(`Натисніть ${bold('f + Enter')} для авто-виправлення (${bold('npm run fix:configs')})\n`)
+        return
+      }
+      if (!interactive || !(await confirm('Застосувати авто-виправлення?'))) return
+      const fixConfigs = fileURLToPath(new URL('./fix-configs.mjs', import.meta.url))
+      const res = spawnSync(process.execPath, [fixConfigs, '--yes'], { stdio: 'inherit' })
+      if (res.status) process.exitCode = res.status
+    })
     .catch((err) => console.error(dim(`check-images: ${err.message}`)))
 }

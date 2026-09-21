@@ -7,9 +7,8 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { createInterface } from 'node:readline/promises'
 import {
-  PAGES, DATA_DIR, loadReleaseData, buildIndexes, analyzePage, printReport,
+  PAGES, DATA_DIR, loadReleaseData, buildIndexes, analyzePage, printReport, confirm,
   green, red, dim, bold,
 } from './check-images.mjs'
 
@@ -39,18 +38,6 @@ function applyFix(filePath, fix) {
   writeFileSync(filePath, lines.join('\n'))
 }
 
-async function confirm(question) {
-  if (ASSUME_YES) return true
-  if (!process.stdin.isTTY) {
-    console.log(dim('Не інтерактивний термінал — пропущено. Запустіть з --yes для застосування.'))
-    return false
-  }
-  const rl = createInterface({ input: process.stdin, output: process.stdout })
-  const answer = (await rl.question(`${question} [y/N] `)).trim().toLowerCase()
-  rl.close()
-  return answer === 'y' || answer === 'yes'
-}
-
 async function main() {
   const data = await loadReleaseData()
   const idx = data ? buildIndexes(data.releases) : null
@@ -69,7 +56,8 @@ async function main() {
   console.log('Буде застосовано:')
   console.log(planned.join('\n') + '\n')
 
-  if (!(await confirm(`Застосувати ${planned.length} ${planned.length === 1 ? 'правку' : 'правок'}?`))) {
+  const question = `Застосувати ${planned.length} ${planned.length === 1 ? 'правку' : 'правок'}?`
+  if (!(await confirm(question, { assumeYes: ASSUME_YES }))) {
     console.log(dim('Скасовано — нічого не змінено.\n'))
     return
   }
