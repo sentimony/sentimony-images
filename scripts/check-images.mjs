@@ -23,7 +23,7 @@ const API_URL = 'https://sentimony.com/api/releases'
 
 // thumbs: config lists only *_th.jpg; _xl/_og siblings live next to them on disk
 export const PAGES = [
-  { file: 'release-images.ts', array: 'releaseImages', folder: 'releases', thumbs: true, chronology: 'releases' },
+  { file: 'release-images.ts', array: 'releaseImages', folder: 'releases', thumbs: true, chronology: 'releases', dates: 'releaseDates' },
   { file: 'artist-images.ts', array: 'artistImages', folder: 'artists', thumbs: true, chronology: 'artists' },
   { file: 'playlist-images.ts', array: 'playlistImages', folder: 'playlists', thumbs: true },
   { file: 'video-images.ts', array: 'videoImages', folder: 'videos', thumbs: true },
@@ -74,6 +74,20 @@ function parseConfigArray(filePath, arrayName) {
     if (m) entries.push({ value: m[1], line: i + 1, comment: m[2] ?? '' })
   }
   return { startLine: start + 1, entries, headers }
+}
+
+// `export const releaseDates: Record<string, string> = { 'slug': 'YYYY-MM-DD', ... }`
+function parseDateMap(filePath, mapName) {
+  const lines = readFileSync(filePath, 'utf8').split('\n')
+  const start = lines.findIndex((l) => l.includes(`const ${mapName}`))
+  if (start === -1) return null
+  const entries = []
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^\s*\}/.test(lines[i])) break
+    const m = lines[i].match(/^\s*'([^']+)':\s*'(\d{4}-\d{2}-\d{2})',?\s*$/)
+    if (m) entries.push({ slug: m[1], date: m[2], line: i + 1 })
+  }
+  return { startLine: start + 1, entries }
 }
 
 // --- Release data: local catalog -> API -> nothing -----------------------------
@@ -145,10 +159,15 @@ function releaseLine(file, info) {
   return `  '${file}', // ${day(info.date)}${info.comingSoon ? ' UNRELEASED' : ''}`
 }
 
+// releaseDates entry: plain date, no UNRELEASED label (the map is date-only)
+function dateMapLine(slug, info) {
+  return `  '${slug}': '${day(info.date)}',`
+}
+
 // --- Config analysis: findings with an optional auto-fix ----------------------
 // finding: { msg, fix?: {kind:'insert'|'move', ...}, done?: action label for the fixer }
 
-export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
+export function analyzePage({ file, array, folder, thumbs, chronology, dates }, idx) {
   const parsed = parseConfigArray(join(DATA_DIR, file), array)
   if (!parsed) {
     return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} — перевірте scripts/check-images.mjs` }] }
@@ -297,6 +316,49 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
         findings.push(fix ? { msg, fix, done } : { msg })
       } else {
         max = { value: e.value, date: d }
+      }
+    }
+  }
+
+  // 8. Derived slug -> date map (releaseDates): every array entry needs a key with
+  //    the catalog date. Expected values come from the catalog, not from the array
+  //    comment, so a stale comment and a stale map never disagree on the target.
+  if (dates && chronology === 'releases' && idx) {
+    const map = parseDateMap(join(DATA_DIR, file), dates)
+    if (!map) {
+      findings.push({ msg: `${red('не знайдено мапу')} ${dates} — перевірте scripts/check-images.mjs` })
+    } else {
+      const byslug = new Map(map.entries.map((m) => [m.slug, m]))
+      let prev = null // last map line seen, to anchor an insert in array order
+      for (const e of entries) {
+        const slug = e.value.replace('_th.jpg', '')
+        const info = idx.releaseInfo.get(slug)
+        if (!info) continue
+        const found = byslug.get(slug)
+        const text = dateMapLine(slug, info)
+        if (!found) {
+          findings.push({
+            msg: `${yellow(`немає в ${dates}:`)} '${slug}' — має бути '${day(info.date)}'`,
+            fix: { kind: 'insert', afterLine: prev ? prev.line : map.startLine, text },
+            done: `додано '${slug}' у ${dates} -> '${day(info.date)}'`,
+          })
+        } else {
+          if (found.date !== day(info.date)) {
+            findings.push({
+              msg: `${yellow(`застаріла дата в ${dates}:`)} '${slug}' (рядок ${found.line}) — '${found.date}' має бути '${day(info.date)}'`,
+              fix: { kind: 'update', line: found.line, text },
+              done: `оновлено ${dates}: '${slug}' -> '${day(info.date)}'`,
+            })
+          }
+          prev = found
+        }
+      }
+      // a key without an array entry is curator data, not drift — report only
+      const slugs = new Set(entries.map((e) => e.value.replace('_th.jpg', '')))
+      for (const m of map.entries) {
+        if (!slugs.has(m.slug)) {
+          findings.push({ msg: `${yellow(`зайвий запис у ${dates}:`)} '${m.slug}' (рядок ${m.line}) — немає в ${array}` })
+        }
       }
     }
   }

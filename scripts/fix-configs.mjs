@@ -19,9 +19,12 @@ const MAX_FIXES = 100
 
 function applyFix(filePath, fix) {
   const lines = readFileSync(filePath, 'utf8').split('\n')
-  // the anchor entry may lack a trailing comma (last item in the array)
+  // The anchor entry may lack a trailing comma (last item in the array); anchored
+  // to end of line, so only a line that truly ends without a comma gets one.
+  // The optional `: 'value'` group covers map entries ('slug': 'date') too — without
+  // the `$` the regex would stop at the key and insert a comma before the colon.
   const ensureComma = (i) => {
-    const m = lines[i]?.match(/^(\s*'[^']*')(?!,)/)
+    const m = lines[i]?.match(/^(\s*'[^']*'(?::\s*'[^']*')?)\s*$/)
     if (m) lines[i] = m[1] + ',' + lines[i].slice(m[1].length)
   }
   if (fix.kind === 'insert') {
