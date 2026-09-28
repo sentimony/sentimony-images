@@ -1,62 +1,70 @@
 #!/usr/bin/env sh
 set -e
 
-# ANTHROPIC SKILLS
-npx skills add https://github.com/anthropics/skills -s \
-  frontend-design \
-  -a codex claude-code -y
-  # algorithmic-art \
-  # brand-guidelines \
-  # canvas-design \
-  # doc-coauthoring \
-  # skill-creator \
-  # webapp-testing \
+echo "npx -y skillio -v" && npx -y skillio -v
+echo "npx -y skills -v" && npx -y skills -v
+# echo "npx -y skillio ls" && npx -y skillio ls
+echo "npx -y skillio rm . -y" && npx -y skillio rm . -y
 
-# ANTHROPIC CLAUDE-PLUGINS-OFFICIAL
-npx skills add https://github.com/anthropics/claude-plugins-official -s \
-  claude-md-improver \
-  -a codex claude-code -y
-  # agent-development \
-  # claude-automation-recommender \
-  # command-development \
-  # hook-development \
-  # session-report \
-  # skill-development \
-
-# OBRA SUPERPOWERS
-npx skills add https://github.com/obra/superpowers -s \
-  executing-plans \
-  finishing-a-development-branch \
-  test-driven-development \
-  systematic-debugging \
-  verification-before-completion \
-  using-git-worktrees \
-  requesting-code-review \
-  receiving-code-review \
-  dispatching-parallel-agents \
-  subagent-driven-development \
-  -a codex claude-code -y
-  # brainstorming \
-  # writing-plans \
-  # writing-skills \
+# MATTPOCOCK SKILLS
+# npx skills add https://github.com/mattpocock/skills -s \
+#   \ grill-me \
+#   \ grill-with-docs \
+#   \ grilling \
+#   \ domain-modeling \
+#   \ improve-codebase-architecture \
+#   -a codex claude-code -y
 
 # SENTIMONY SKILLS
+# All at once
+# npx skills add sentimony/skills -a codex claude-code -y
+# Or each separately
 npx skills add https://github.com/sentimony/skills -s \
   scope-triage \
   plan-crafting \
+  inline-plan-dev \
+  subagent-plan-dev \
+  git-worktree-isolation \
+  parallel-agents \
+  tdd \
+  review-request \
+  review-resolution \
+  debugging \
   web-debug \
+  verification-gate \
+  branch-finish \
+  commit-all \
+  frontend-crafting \
   vitest \
   typescript \
-  echarts \
+  \ echarts \
+  prose-crafting \
   dashfix \
   negafix \
+  maintaining-agent-context \
+  \ skill-crafting \
+  secret-hygiene \
   -a codex claude-code -y
 
-# TASTE SKILL
-npx skills add https://github.com/Leonxlnx/taste-skill -s design-taste-frontend -a codex claude-code -y
+# LOCAL SKILLS
+# sc-manage is not published anywhere, it lives in the sentimony/label-skills checkout
+# SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
+# SC_MANAGE_SKILL=$(dirname "$(dirname "$PROJECT_ROOT")")/sentimony/label-skills/skills/sc-manage
 
-# IMPECCABLE
-npx skills add https://github.com/pbakaus/impeccable -s impeccable -a codex claude-code -y
+# if [ -d "$SC_MANAGE_SKILL" ]; then
+#   for dir in "$PROJECT_ROOT/.claude/skills" "$PROJECT_ROOT/.agents/skills"; do
+#     mkdir -p "$dir"
+#     link="$dir/sc-manage"
+#     if [ -e "$link" ] && [ ! -L "$link" ]; then
+#       echo "warning: $link exists and is not a symlink, skipped" >&2
+#       continue
+#     fi
+#     ln -sfn "$SC_MANAGE_SKILL" "$link"
+#     echo "linked $link"
+#   done
+# else
+#   echo "warning: $SC_MANAGE_SKILL not found, sc-manage not linked" >&2
+# fi
 
-echo ""
-echo "npx skillio ls" && npx skillio ls
+echo "npx -y skillio ls" && npx -y skillio ls

@@ -7,9 +7,8 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { createInterface } from 'node:readline/promises'
 import {
-  PAGES, DATA_DIR, loadReleaseData, buildIndexes, analyzePage, printReport,
+  PAGES, DATA_DIR, loadReleaseData, buildIndexes, analyzePage, printReport, confirm,
   green, red, dim, bold,
 } from './check-images.mjs'
 
@@ -20,9 +19,12 @@ const MAX_FIXES = 100
 
 function applyFix(filePath, fix) {
   const lines = readFileSync(filePath, 'utf8').split('\n')
-  // the anchor entry may lack a trailing comma (last item in the array)
+  // The anchor entry may lack a trailing comma (last item in the array); anchored
+  // to end of line, so only a line that truly ends without a comma gets one.
+  // The optional `: 'value'` group covers map entries ('slug': 'date') too — without
+  // the `$` the regex would stop at the key and insert a comma before the colon.
   const ensureComma = (i) => {
-    const m = lines[i]?.match(/^(\s*'[^']*')(?!,)/)
+    const m = lines[i]?.match(/^(\s*'[^']*'(?::\s*'[^']*')?)\s*$/)
     if (m) lines[i] = m[1] + ',' + lines[i].slice(m[1].length)
   }
   if (fix.kind === 'insert') {
@@ -37,18 +39,6 @@ function applyFix(filePath, fix) {
     lines.splice(after, 0, fix.text)
   }
   writeFileSync(filePath, lines.join('\n'))
-}
-
-async function confirm(question) {
-  if (ASSUME_YES) return true
-  if (!process.stdin.isTTY) {
-    console.log(dim('Не інтерактивний термінал — пропущено. Запустіть з --yes для застосування.'))
-    return false
-  }
-  const rl = createInterface({ input: process.stdin, output: process.stdout })
-  const answer = (await rl.question(`${question} [y/N] `)).trim().toLowerCase()
-  rl.close()
-  return answer === 'y' || answer === 'yes'
 }
 
 async function main() {
@@ -69,7 +59,8 @@ async function main() {
   console.log('Буде застосовано:')
   console.log(planned.join('\n') + '\n')
 
-  if (!(await confirm(`Застосувати ${planned.length} ${planned.length === 1 ? 'правку' : 'правок'}?`))) {
+  const question = `Застосувати ${planned.length} ${planned.length === 1 ? 'правку' : 'правок'}?`
+  if (!(await confirm(question, { assumeYes: ASSUME_YES }))) {
     console.log(dim('Скасовано — нічого не змінено.\n'))
     return
   }

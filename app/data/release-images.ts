@@ -98,8 +98,8 @@ export const releaseImages = [
   'syned-brain-dementor-mysterium-tremendum_th.jpg', // 2025-07-25
   'gaz-mask-12-years_th.jpg', // 2025-12-05
   'alien-immigrant-plant-medicine_th.jpg', // 2026-06-23
-  'frog-prog-songs-of-buffo_th.jpg', // 2026-07-31 UNRELEASED
-  'vorg-cyber-soul-chill_th.jpg', // 2026-08-14 UNRELEASED
+  'frog-prog-songs-of-buffo_th.jpg', // 2026-09-22
+  'vorg-cyber-soul-chill_th.jpg', // 2026-10-16 UNRELEASED
 ]
 
 // Release date per slug, from the trailing `// YYYY-MM-DD` comments above.
@@ -203,6 +203,6 @@ export const releaseDates: Record<string, string> = {
   'syned-brain-dementor-mysterium-tremendum': '2025-07-25',
   'gaz-mask-12-years': '2025-12-05',
   'alien-immigrant-plant-medicine': '2026-06-23',
-  'frog-prog-songs-of-buffo': '2026-07-03',
-  'vorg-cyber-soul-chill': '2026-07-17',
+  'frog-prog-songs-of-buffo': '2026-09-22',
+  'vorg-cyber-soul-chill': '2026-10-16',
 }
