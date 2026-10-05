@@ -44,9 +44,9 @@ interface InfoRow {
   value: string
 }
 
-// A row is present whenever its label applies; a missing value renders as "—".
+// A row is present whenever its label applies; a missing value renders as "-".
 // The date/id rows only apply on pages that pass a label for them.
-const DASH = '—'
+const DASH = '-'
 
 const infoRows = computed<InfoRow[]>(() => {
   const rows: InfoRow[] = []

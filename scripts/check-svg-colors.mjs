@@ -50,7 +50,7 @@ function fixSvg(content, finding) {
 async function confirm(question) {
   if (ASSUME_YES) return true
   if (!process.stdin.isTTY) {
-    console.log(dim('Не інтерактивний термінал — пропущено. Запустіть з --yes для застосування.'))
+    console.log(dim('Не інтерактивний термінал - пропущено. Запустіть з --yes для застосування.'))
     return false
   }
   const rl = createInterface({ input: process.stdin, output: process.stdout })
@@ -85,7 +85,7 @@ async function main() {
   console.log()
 
   if (!(await confirm(`Виправити ${offenders.length} ${offenders.length === 1 ? 'файл' : 'файлів'}?`))) {
-    console.log(dim('Скасовано — нічого не змінено.\n'))
+    console.log(dim('Скасовано - нічого не змінено.\n'))
     return
   }
 
