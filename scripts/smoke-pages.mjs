@@ -40,7 +40,7 @@ const IGNORE_CONSOLE = [
 
 function startPreview() {
   // Run vite's binary directly (not via `npx`) so kill() signals the actual
-  // preview process — killing an `npx` wrapper can orphan its vite child and
+  // preview process - killing an `npx` wrapper can orphan its vite child and
   // leave the port held, which then trips --strictPort on the next run.
   const bin = fileURLToPath(new URL('../node_modules/vite/bin/vite.js', import.meta.url))
   const proc = spawn(
