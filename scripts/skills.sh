@@ -46,15 +46,39 @@ run npx skills add https://github.com/obra/superpowers -s \
   # writing-skills \
 
 # SENTIMONY SKILLS
+# All at once
+# npx skills add sentimony/skills -a codex claude-code -y
+# Or each separately
+# a "\ " prefix disables a skill on purpose: the leading space makes the name match nothing
 run npx skills add https://github.com/sentimony/skills -s \
   scope-triage \
+  \ scope-check \
   plan-crafting \
+  \ inline-plan-dev \
+  \ subagent-plan-dev \
+  \ git-worktree-isolation \
+  \ parallel-agents \
+  \ tdd \
+  \ cross-review \
+  \ review-request \
+  \ review-resolution \
+  \ debugging \
   web-debug \
+  \ webapp-debugger \
+  \ verification-gate \
+  \ branch-finish \
+  \ commit-all \
+  \ gh-switch \
+  \ frontend-crafting \
   vitest \
   typescript \
   echarts \
+  \ prose-crafting \
   dashfix \
   negafix \
+  \ maintaining-agent-context \
+  \ secret-hygiene \
+  \ skill-crafting \
   -a codex claude-code -y
 
 # TASTE SKILL
