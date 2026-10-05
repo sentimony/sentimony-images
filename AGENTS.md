@@ -14,7 +14,7 @@ This is a **Digital Keeper** project for **Sentimony Records** - a Ukrainian psy
 
 ### Related Projects
 - **sentimony-images** (this repo): Vue 3 + Vite SPA storing release/artist/event/playlist/video/background/SVG images
-- **sentimony-nuxt**: Main website; catalog source of truth `server/data/sentimony-db.yml` (сусідній `sentimony-db-export.json` — gitignored build-артефакт, не читати)
+- **sentimony-nuxt**: Main website; catalog source of truth `server/data/sentimony-db.yml` (сусідній `sentimony-db-export.json` - gitignored build-артефакт, не читати)
 
 ## Commands
 Node `24.15.0` (`nvm use`), npm ≥ 11.12.0 (`engines` у package.json).
@@ -28,7 +28,7 @@ npm run build    # Production build -> dist/
 npm run preview  # Preview the production build
 npm run deploy:stage   # Deploy preview (Netlify alias: stage)
 npm run deploy:prod    # Deploy to production
-npm run check:images  # Звірка img-папок з конфігами; у TTY пропонує [y/N] запустити fix:configs (авто-запуск після банера dev-сервера — плагін checkImages у vite.config.ts, там замість prompt хоткей f)
+npm run check:images  # Звірка img-папок з конфігами; у TTY пропонує [y/N] запустити fix:configs (авто-запуск після банера dev-сервера - плагін checkImages у vite.config.ts, там замість prompt хоткей f)
 npm run fix:configs   # Виправлення конфігів (вставки + переміщення за хронологією) з підтвердженням; --yes пропускає prompt
 npm run typecheck     # vue-tsc --noEmit: Vue app (SFC + app/vite.config) через сумісний TypeScript 6 API
 npm run typecheck:ts7 # Native TypeScript 7: netlify. CI запускає обидві typecheck-команди; спільний base: strict + noUncheckedIndexedAccess/noFallthroughCasesInSwitch/noImplicitOverride/exactOptionalPropertyTypes; scripts/*.mjs не типізуються (checkJs вимкнено)
@@ -39,9 +39,9 @@ Deploy auth: токен у `.env/.env.local` (`NETLIFY_AUTH_TOKEN`); dotenv-cli 
 
 ## check-images / fix-configs (scripts/)
 - Конфіги картинок живуть у `app/data/*.ts` (по одному на сторінку, `export const xxxImages = [...]`); сторінки їх імпортують. Коментарі-дати та групи-релізи в artist-images.ts — кураторські дані, зберігати
-- `check-images.mjs` звіряє `public/assets/img/<folder>/` з `app/data/*.ts`: файл без запису в конфігу, запис без файла, дублікати, `_th` без пари `_xl` і навпаки, застарілі коментарі-дати releases (дата/UNRELEASED проти каталогу), порушення хронології (releases + artists). Мовчить коли все чисто. Сам нічого не пише: у TTY після звіту питає `[y/N]` і делегує `fix-configs.mjs --yes` (exit-код дочірнього процесу пробрасується), у non-TTY/CI лише текстова підказка — exit 0. `confirm()` живе тут і імпортується у fix-configs
-- `fix-configs.mjs` імпортує логіку з check-images.mjs, показує план і чекає підтвердження (`--yes`/`-y` пропускає; не-TTY без `--yes` нічого не змінює). Застосовує лише безпечні правки (insert/move, по одній з повторним аналізом), exit 1 при збої запису. Артисти вставляються в кінець групи свого першого релізу (`// дата slug`); якщо групи нема — лише рекомендація. Записи без файла та дублікати НЕ видаляє — лише рекомендує. Коментар-дата releases регенерується (`UNRELEASED` за coming_soon), інлайн-коментарі artists зберігаються. Похідна мапа `releaseDates` у тому ж файлі теж звіряється й виправляється (вставка/оновлення; очікувана дата — з каталогу, не з коментаря масиву, щоб два застарілі місця не суперечили одне одному); зайвий ключ без запису в масиві — лише рекомендація
-- Дані релізів: `../sentimony-nuxt/server/data/sentimony-db.yml` (джерело істини; парситься devDep `yaml` через динамічний import) -> fallback `https://sentimony.com/api/releases` (для CI/без сусіднього чекауту) -> без даних пропускає хронологію. Порядок саме такий: API віддає **задеплоєний** каталог і відстає від незасинхронізованих правок yml — з API-first правка дати в yml не помічалась. Поле `releases[].artists` (рядок зі slug через кому) дає першу появу артиста без парсингу HTML
+- `check-images.mjs` звіряє `public/assets/img/<folder>/` з `app/data/*.ts`: файл без запису в конфігу, запис без файла, дублікати, `_th` без пари `_xl` і навпаки, застарілі коментарі-дати releases (дата/UNRELEASED проти каталогу), порушення хронології (releases + artists). Мовчить коли все чисто. Сам нічого не пише: у TTY після звіту питає `[y/N]` і делегує `fix-configs.mjs --yes` (exit-код дочірнього процесу пробрасується), у non-TTY/CI лише текстова підказка - exit 0. `confirm()` живе тут і імпортується у fix-configs
+- `fix-configs.mjs` імпортує логіку з check-images.mjs, показує план і чекає підтвердження (`--yes`/`-y` пропускає; не-TTY без `--yes` нічого не змінює). Застосовує лише безпечні правки (insert/move, по одній з повторним аналізом), exit 1 при збої запису. Артисти вставляються в кінець групи свого першого релізу (`// дата slug`); якщо групи нема - лише рекомендація. Записи без файла та дублікати НЕ видаляє - лише рекомендує. Коментар-дата releases регенерується (`UNRELEASED` за coming_soon), інлайн-коментарі artists зберігаються. Похідна мапа `releaseDates` у тому ж файлі теж звіряється й виправляється (вставка/оновлення; очікувана дата - з каталогу, не з коментаря масиву, щоб два застарілі місця не суперечили одне одному); зайвий ключ без запису в масиві - лише рекомендація
+- Дані релізів: `../sentimony-nuxt/server/data/sentimony-db.yml` (джерело істини; парситься devDep `yaml` через динамічний import) -> fallback `https://sentimony.com/api/releases` (для CI/без сусіднього чекауту) -> без даних пропускає хронологію. Порядок саме такий: API віддає **задеплоєний** каталог і відстає від незасинхронізованих правок yml - з API-first правка дати в yml не помічалась. Поле `releases[].artists` (рядок зі slug через кому) дає першу появу артиста без парсингу HTML
 
 ## create-th / create-og (scripts/, macOS)
 - `sh scripts/create-th.sh <a_xl.jpg> [more…] [-q 69] [-f]` — `_th.jpg` поруч, довша сторона 240px, пропорції зберігаються (`sips -Z`). `sips`-only, без залежностей
@@ -74,7 +74,7 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 
 ## Data Structure
 
-### Database Location (source of truth; JSON export поруч — gitignored артефакт)
+### Database Location (source of truth; JSON export поруч - gitignored артефакт)
 ```
 /Users/ihororlovskyi/work/github/ihororlovskyi/sentimony-nuxt/server/data/sentimony-db.yml
 ```
@@ -100,11 +100,11 @@ Inline `// NNN slug (role)` comments in `artist-images.ts` mirror sentimony-nuxt
 - `check-images.mjs` has `CHRONOLOGY_EXEMPT` (currently `['irukanji']`) so the founder override doesn't trip the artist-chronology check.
 - Gotcha: `releases[].artists` sometimes uses a different slug than the artist's real `artists[].slug` (dashes dropped, alias name) — e.g. `ers`→`e-r-s`, `alientime`→`alien-time`, `ka`→`ka-art`. Such artists silently fall to the alphabetical tail unless aliased by hand when recomputing.
 - Manual overrides feed the recompute: `releases[].artists`/`db.events` lineups sometimes miss real credits (compiler DJs, co-organizers) the curator knows about but that never made it into sentimony-nuxt's data. These are injected as extra slugs on a specific release/event date before numbering runs (e.g. `va-true-story` compiled-by `iorlovskyi`+`zea`; `shift-space` co-organizer `hagen`), so the artist's number reflects their true first-appearance date, not a later DB-visible one.
-- No script commits this numbering to the repo yet — it was computed by hand once (session-local scripts, not checked in). Recompute from `sentimony-nuxt/server/data/sentimony-db.yml` (`releases` + `events` + `artists`) plus the manual-override list above if the catalog changes.
-- `artist-images.ts` also exports three derived maps used by the Artists page, all regenerated from the file's own comments / the catalog YAML — keep in sync when the catalog changes: `artistsWithoutImages` (slugs of `// 'slug'` commented artists with no portrait, shown as placeholder cards under the "All" toggle), `artistDates` (slug→first-appearance date, covers both portrait and placeholder artists; drives the Date Joined sort), and `artistIds` (slug→`category_id` from `db.artists[slug]`, shown as "Artist ID" in the lightbox; `ka`→`ka-art` aliased, `not in artist db` artists omitted). The Artists page weaves portrait + placeholder artists into one sorted list; the lightbox navigates portrait artists only.
+- No script commits this numbering to the repo yet - it was computed by hand once (session-local scripts, not checked in). Recompute from `sentimony-nuxt/server/data/sentimony-db.yml` (`releases` + `events` + `artists`) plus the manual-override list above if the catalog changes.
+- `artist-images.ts` also exports three derived maps used by the Artists page, all regenerated from the file's own comments / the catalog YAML - keep in sync when the catalog changes: `artistsWithoutImages` (slugs of `// 'slug'` commented artists with no portrait, shown as placeholder cards under the "All" toggle), `artistDates` (slug→first-appearance date, covers both portrait and placeholder artists; drives the Date Joined sort), and `artistIds` (slug→`category_id` from `db.artists[slug]`, shown as "Artist ID" in the lightbox; `ka`→`ka-art` aliased, `not in artist db` artists omitted). The Artists page weaves portrait + placeholder artists into one sorted list; the lightbox navigates portrait artists only.
 
 ## Key Files
-- `app/data/release-images.ts` - Release images sorted by date (~101 releases: 2007-2026); also exports `releaseDates` (slug→date) for the lightbox Release Date line — похідні дані, їх підтримує `fix:configs`
+- `app/data/release-images.ts` - Release images sorted by date (~101 releases: 2007-2026); also exports `releaseDates` (slug→date) for the lightbox Release Date line - похідні дані, їх підтримує `fix:configs`
 - `app/data/artist-images.ts` - Artist images sorted by first appearance (~102 with portraits); also exports `artistsWithoutImages`, `artistDates`, `artistIds` (see Artist Numbering)
 
 ## Artists Without Release Connection

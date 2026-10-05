@@ -3,7 +3,7 @@
 // (app/data/*.ts): inserting new files and moving entries into chronological
 // order. Shows the plan and asks for confirmation (--yes / -y skips the prompt).
 // Never deletes entries whose files are missing on disk (the file may have
-// been renamed) — those stay recommendations. Exits 1 if applying a fix fails.
+// been renamed) - those stay recommendations. Exits 1 if applying a fix fails.
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -21,7 +21,7 @@ function applyFix(filePath, fix) {
   const lines = readFileSync(filePath, 'utf8').split('\n')
   // The anchor entry may lack a trailing comma (last item in the array); anchored
   // to end of line, so only a line that truly ends without a comma gets one.
-  // The optional `: 'value'` group covers map entries ('slug': 'date') too — without
+  // The optional `: 'value'` group covers map entries ('slug': 'date') too - without
   // the `$` the regex would stop at the key and insert a comma before the colon.
   const ensureComma = (i) => {
     const m = lines[i]?.match(/^(\s*'[^']*'(?::\s*'[^']*')?)\s*$/)
@@ -61,7 +61,7 @@ async function main() {
 
   const question = `Застосувати ${planned.length} ${planned.length === 1 ? 'правку' : 'правок'}?`
   if (!(await confirm(question, { assumeYes: ASSUME_YES }))) {
-    console.log(dim('Скасовано — нічого не змінено.\n'))
+    console.log(dim('Скасовано - нічого не змінено.\n'))
     return
   }
 
@@ -77,7 +77,7 @@ async function main() {
     } catch (err) {
       // partial progress must be visible: report what landed before the failure
       if (actions.length) console.log(actions.join('\n'))
-      console.error(`  ${red('✘')} ${next.def.file}: ${next.f.done} — ${err.message}`)
+      console.error(`  ${red('✘')} ${next.def.file}: ${next.f.done} - ${err.message}`)
       process.exitCode = 1
       return
     }
@@ -85,10 +85,10 @@ async function main() {
   }
   console.log(actions.join('\n') + '\n')
   // leftover fixable findings mean the cap was hit (huge batch) or a fix is not
-  // converging — either way automation must see a failure; a clean run leaves 0
+  // converging - either way automation must see a failure; a clean run leaves 0
   const left = PAGES.flatMap((def) => analyzePage(def, idx).findings.filter((f) => f.fix)).length
   if (left > 0) {
-    console.error(`  ${red('✘')} лишилося правок: ${left} — запустіть повторно або перевірте конфіги`)
+    console.error(`  ${red('✘')} лишилося правок: ${left} - запустіть повторно або перевірте конфіги`)
     process.exitCode = 1
   }
   printReport(idx, data, { hint: false }) // whatever remains is manual work

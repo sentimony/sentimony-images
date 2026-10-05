@@ -17,7 +17,7 @@ export const DATA_DIR = join(root, 'app/data')
 
 // sentimony-db.yml is the catalog source of truth, so it wins over the API: the API
 // serves the last *deployed* catalog and lags behind unsynced local edits. (The JSON
-// export next to the YAML is a gitignored build artifact — never read it.)
+// export next to the YAML is a gitignored build artifact - never read it.)
 const CATALOG_PATH = resolve(root, '../sentimony-nuxt/server/data/sentimony-db.yml')
 const API_URL = 'https://sentimony.com/api/releases'
 
@@ -101,7 +101,7 @@ export async function loadReleaseData() {
     const { parse } = await import('yaml')
     const db = parse(readFileSync(CATALOG_PATH, 'utf8'))
     return { source: 'локальний каталог sentimony-db.yml (sentimony-nuxt)', releases: asList(db.releases) }
-  } catch { /* no sibling repo checkout (CI) or no yaml — fall back to the API */ }
+  } catch { /* no sibling repo checkout (CI) or no yaml - fall back to the API */ }
   try {
     // short timeout: this runs on dev server startup and must not stall the banner
     const res = await fetch(API_URL, { signal: AbortSignal.timeout(3_000) })
@@ -133,7 +133,7 @@ const day = (iso) => iso.slice(0, 10)
 const artistSlugOf = (file) => file.replace(/-\d+_th\.jpg$/, '')
 
 // Curated exception: pulled out of release-date order on purpose (e.g. the
-// label founder pinned first) — chronology checks should ignore these.
+// label founder pinned first) - chronology checks should ignore these.
 const CHRONOLOGY_EXEMPT = new Set(['irukanji'])
 
 // Insertion anchor: the last config entry dated <= the new date (self excluded for moves)
@@ -170,7 +170,7 @@ function dateMapLine(slug, info) {
 export function analyzePage({ file, array, folder, thumbs, chronology, dates }, idx) {
   const parsed = parseConfigArray(join(DATA_DIR, file), array)
   if (!parsed) {
-    return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} — перевірте scripts/check-images.mjs` }] }
+    return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} - перевірте scripts/check-images.mjs` }] }
   }
   const { startLine, entries, headers } = parsed
 
@@ -195,16 +195,16 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
         const anchor = artistGroupAnchor(headers, first.release)
         if (anchor) {
           findings.push({
-            msg: `${yellow('відсутній у конфігу:')} '${f}' — ${ctx}, вставте у групу '${first.release}' (рядок ${anchor})`,
+            msg: `${yellow('відсутній у конфігу:')} '${f}' - ${ctx}, вставте у групу '${first.release}' (рядок ${anchor})`,
             fix: { kind: 'insert', afterLine: anchor, text: `  '${f}',` },
             done: `додано '${f}' у групу '${first.release}'`,
           })
         } else {
-          // the release has no group header yet — creating one is curation work
-          findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — ${ctx}, групи '// ${day(first.date)} ${first.release}' ще немає, додайте її вручну` })
+          // the release has no group header yet - creating one is curation work
+          findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - ${ctx}, групи '// ${day(first.date)} ${first.release}' ще немає, додайте її вручну` })
         }
       } else {
-        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — немає в даних релізів, позицію визначте вручну` })
+        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - немає в даних релізів, позицію визначте вручну` })
       }
     } else if (chronology === 'releases') {
       const info = idx?.releaseInfo.get(f.replace('_th.jpg', ''))
@@ -212,12 +212,12 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
         const pos = suggestPosition(entries, dateOf, info.date)
         const where = pos ? `після '${pos.value}' (рядок ${pos.line})` : 'на початок масиву'
         findings.push({
-          msg: `${yellow('відсутній у конфігу:')} '${f}' — ${day(info.date)}, вставте ${where}`,
+          msg: `${yellow('відсутній у конфігу:')} '${f}' - ${day(info.date)}, вставте ${where}`,
           fix: { kind: 'insert', afterLine: pos ? pos.line : startLine, text: releaseLine(f, info) },
           done: `додано '${f}' ${where}`,
         })
       } else {
-        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — немає в даних релізів, позицію визначте вручну` })
+        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - немає в даних релізів, позицію визначте вручну` })
       }
     } else {
       // non-chronological configs keep alphabetical order
@@ -231,19 +231,19 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
     }
   }
 
-  // 2. Config entry without a file on disk — recommendation only (no auto-fix:
+  // 2. Config entry without a file on disk - recommendation only (no auto-fix:
   //    the file may have been renamed, deleting a curated entry is irreversible)
   for (const e of entries.filter((e) => !fileSet.has(e.value))) {
-    findings.push({ msg: `${red('файла немає на диску:')} '${e.value}' (рядок ${e.line}) — видаліть запис або поверніть файл` })
+    findings.push({ msg: `${red('файла немає на диску:')} '${e.value}' (рядок ${e.line}) - видаліть запис або поверніть файл` })
   }
 
-  // 3. Duplicate config entries — recommendation only (the copies may carry
+  // 3. Duplicate config entries - recommendation only (the copies may carry
   //    different inline comments, picking the survivor is a manual call)
   const seen = new Map()
   for (const e of entries) {
     const first = seen.get(e.value)
     if (first) {
-      findings.push({ msg: `${yellow('дубль у конфігу:')} '${e.value}' (рядок ${e.line}, перший запис на рядку ${first.line}) — приберіть зайвий` })
+      findings.push({ msg: `${yellow('дубль у конфігу:')} '${e.value}' (рядок ${e.line}, перший запис на рядку ${first.line}) - приберіть зайвий` })
     } else {
       seen.set(e.value, e)
     }
@@ -257,15 +257,15 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
         findings.push({ msg: `${red('немає пари _xl:')} '${xl}' для '${e.value}' (рядок ${e.line})` })
       }
     }
-    // 5. Orphan _xl on disk without a _th pair — invisible to the page entirely
+    // 5. Orphan _xl on disk without a _th pair - invisible to the page entirely
     for (const f of allFiles.filter((f) => f.endsWith('_xl.jpg'))) {
       if (!fileSet.has(f.replace('_xl.jpg', '_th.jpg'))) {
-        findings.push({ msg: `${yellow('є _xl без _th:')} '${f}' — додайте '${f.replace('_xl.jpg', '_th.jpg')}' або приберіть файл` })
+        findings.push({ msg: `${yellow('є _xl без _th:')} '${f}' - додайте '${f.replace('_xl.jpg', '_th.jpg')}' або приберіть файл` })
       }
     }
   }
 
-  // 6. Releases: the date comment is derived data — flag entries whose comment
+  // 6. Releases: the date comment is derived data - flag entries whose comment
   //    drifted from the API (wrong date or a missing/stale UNRELEASED label)
   if (chronology === 'releases' && idx) {
     for (const e of entries) {
@@ -275,7 +275,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
       const expectedComment = expected.slice(expected.indexOf('//'))
       if (e.comment !== expectedComment) {
         findings.push({
-          msg: `${yellow('застарілий коментар:')} '${e.value}' (рядок ${e.line}) — '${e.comment || 'без коментаря'}' має бути '${expectedComment}'`,
+          msg: `${yellow('застарілий коментар:')} '${e.value}' (рядок ${e.line}) - '${e.comment || 'без коментаря'}' має бути '${expectedComment}'`,
           fix: { kind: 'update', line: e.line, text: expected },
           done: `оновлено коментар '${e.value}' -> '${expectedComment}'`,
         })
@@ -291,7 +291,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
       const d = dateOf(e.value)
       if (!d) {
         if (chronology === 'releases') {
-          findings.push({ msg: `${yellow('немає в даних релізів:')} '${e.value}' (рядок ${e.line}) — одрук у назві?` })
+          findings.push({ msg: `${yellow('немає в даних релізів:')} '${e.value}' (рядок ${e.line}) - одрук у назві?` })
         }
         continue // artists without releases (astrocat etc.) are skipped
       }
@@ -302,7 +302,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
         if (chronology === 'artists') {
           const first = idx.artistFirst.get(artistSlugOf(e.value))
           const anchor = artistGroupAnchor(headers, first.release)
-          // anchor === e.line would loop forever (mis-ordered headers) — keep it manual
+          // anchor === e.line would loop forever (mis-ordered headers) - keep it manual
           if (anchor && anchor !== e.line) {
             // keep the inline comment (role labels etc.)
             fix = { kind: 'move', fromLine: e.line, afterLine: anchor, text: `  '${e.value}',${e.comment ? ` ${e.comment}` : ''}` }
@@ -326,7 +326,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
   if (dates && chronology === 'releases' && idx) {
     const map = parseDateMap(join(DATA_DIR, file), dates)
     if (!map) {
-      findings.push({ msg: `${red('не знайдено мапу')} ${dates} — перевірте scripts/check-images.mjs` })
+      findings.push({ msg: `${red('не знайдено мапу')} ${dates} - перевірте scripts/check-images.mjs` })
     } else {
       const byslug = new Map(map.entries.map((m) => [m.slug, m]))
       let prev = null // last map line seen, to anchor an insert in array order
@@ -338,14 +338,14 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
         const text = dateMapLine(slug, info)
         if (!found) {
           findings.push({
-            msg: `${yellow(`немає в ${dates}:`)} '${slug}' — має бути '${day(info.date)}'`,
+            msg: `${yellow(`немає в ${dates}:`)} '${slug}' - має бути '${day(info.date)}'`,
             fix: { kind: 'insert', afterLine: prev ? prev.line : map.startLine, text },
             done: `додано '${slug}' у ${dates} -> '${day(info.date)}'`,
           })
         } else {
           if (found.date !== day(info.date)) {
             findings.push({
-              msg: `${yellow(`застаріла дата в ${dates}:`)} '${slug}' (рядок ${found.line}) — '${found.date}' має бути '${day(info.date)}'`,
+              msg: `${yellow(`застаріла дата в ${dates}:`)} '${slug}' (рядок ${found.line}) - '${found.date}' має бути '${day(info.date)}'`,
               fix: { kind: 'update', line: found.line, text },
               done: `оновлено ${dates}: '${slug}' -> '${day(info.date)}'`,
             })
@@ -353,11 +353,11 @@ export function analyzePage({ file, array, folder, thumbs, chronology, dates }, 
           prev = found
         }
       }
-      // a key without an array entry is curator data, not drift — report only
+      // a key without an array entry is curator data, not drift - report only
       const slugs = new Set(entries.map((e) => e.value.replace('_th.jpg', '')))
       for (const m of map.entries) {
         if (!slugs.has(m.slug)) {
-          findings.push({ msg: `${yellow(`зайвий запис у ${dates}:`)} '${m.slug}' (рядок ${m.line}) — немає в ${array}` })
+          findings.push({ msg: `${yellow(`зайвий запис у ${dates}:`)} '${m.slug}' (рядок ${m.line}) - немає в ${array}` })
         }
       }
     }
@@ -380,7 +380,7 @@ export function printReport(idx, data, { hint }) {
     }
   }
   if (!data) {
-    report.push(dim('Дані релізів недоступні (нема інтернету і локального export) — перевірки хронології пропущено.'))
+    report.push(dim('Дані релізів недоступні (нема інтернету і локального export) - перевірки хронології пропущено.'))
   }
   if (report.length) {
     console.log(`\n${bold('check-images')} ${dim(data ? `(дані: ${data.source})` : '')}\n`)
@@ -395,7 +395,7 @@ export function printReport(idx, data, { hint }) {
 export async function confirm(question, { assumeYes = false } = {}) {
   if (assumeYes) return true
   if (!process.stdin.isTTY) {
-    console.log(dim('Не інтерактивний термінал — пропущено. Запустіть з --yes для застосування.'))
+    console.log(dim('Не інтерактивний термінал - пропущено. Запустіть з --yes для застосування.'))
     return false
   }
   const rl = createInterface({ input: process.stdin, output: process.stdout })
@@ -404,14 +404,14 @@ export async function confirm(question, { assumeYes = false } = {}) {
   return answer === 'y' || answer === 'yes'
 }
 
-// Run only as an entry point — fix-configs.mjs imports from here without side effects
+// Run only as an entry point - fix-configs.mjs imports from here without side effects
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // --no-prompt: the vite dev plugin runs us with vite owning stdin, so a readline
   // here would fight vite's own one; it offers the `f` shortcut instead
   const noPrompt = process.argv.includes('--no-prompt')
   loadReleaseData()
     .then(async (data) => {
-      // no prompt without a TTY (CI, piped output) — keep the textual hint there
+      // no prompt without a TTY (CI, piped output) - keep the textual hint there
       const interactive = !noPrompt && process.stdin.isTTY
       const fixable = printReport(data ? buildIndexes(data.releases) : null, data, { hint: !interactive && !noPrompt })
       if (!fixable) return
