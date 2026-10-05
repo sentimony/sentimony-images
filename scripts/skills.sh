@@ -1,8 +1,13 @@
 #!/usr/bin/env sh
 set -e
 
+# echo the command in cyan, then run it
+run() { printf '\033[0;36m%s\033[0m\n' "$*"; "$@"; }
+
+run npx -y skills -v
+
 # ANTHROPIC SKILLS
-npx skills add https://github.com/anthropics/skills -s \
+run npx skills add https://github.com/anthropics/skills -s \
   frontend-design \
   -a codex claude-code -y
   # algorithmic-art \
@@ -13,7 +18,7 @@ npx skills add https://github.com/anthropics/skills -s \
   # webapp-testing \
 
 # ANTHROPIC CLAUDE-PLUGINS-OFFICIAL
-npx skills add https://github.com/anthropics/claude-plugins-official -s \
+run npx skills add https://github.com/anthropics/claude-plugins-official -s \
   claude-md-improver \
   -a codex claude-code -y
   # agent-development \
@@ -24,7 +29,7 @@ npx skills add https://github.com/anthropics/claude-plugins-official -s \
   # skill-development \
 
 # OBRA SUPERPOWERS
-npx skills add https://github.com/obra/superpowers -s \
+run npx skills add https://github.com/obra/superpowers -s \
   executing-plans \
   finishing-a-development-branch \
   test-driven-development \
@@ -41,7 +46,7 @@ npx skills add https://github.com/obra/superpowers -s \
   # writing-skills \
 
 # SENTIMONY SKILLS
-npx skills add https://github.com/sentimony/skills -s \
+run npx skills add https://github.com/sentimony/skills -s \
   scope-triage \
   plan-crafting \
   web-debug \
@@ -53,10 +58,15 @@ npx skills add https://github.com/sentimony/skills -s \
   -a codex claude-code -y
 
 # TASTE SKILL
-npx skills add https://github.com/Leonxlnx/taste-skill -s design-taste-frontend -a codex claude-code -y
+run npx skills add https://github.com/Leonxlnx/taste-skill -s design-taste-frontend -a codex claude-code -y
 
 # IMPECCABLE
-npx skills add https://github.com/pbakaus/impeccable -s impeccable -a codex claude-code -y
+run npx skills add https://github.com/pbakaus/impeccable -s impeccable -a codex claude-code -y
 
-echo ""
-echo "npx skillio ls" && npx skillio ls
+# skills.local.sh passes --no-list and prints its own listing after the local skills
+if [ "$1" != --no-list ]; then
+  run npx -y skillio -v
+  run npx skillio ls -g
+  run npx skillio list
+  run npx skillio usage --period 2w
+fi
