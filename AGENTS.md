@@ -76,7 +76,7 @@ Vue 3 (`<script setup>` + TypeScript) · Vite · vue-router 5 · Tailwind CSS v4
 
 ### Database Location (source of truth; JSON export поруч - gitignored артефакт)
 ```
-/Users/ihororlovskyi/work/github/ihororlovskyi/sentimony-nuxt/server/data/sentimony-db.yml
+/Users/ihororlovskyi/work/github/sentimony/sentimony-nuxt/server/data/sentimony-db.yml
 ```
 
 ### Key Fields in Database
