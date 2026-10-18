@@ -7,7 +7,7 @@
     "setup": "sh scripts/setup.sh",
     "skills": "sh scripts/skills.sh",
     "preinstall": "npm run setup",
-    "postinstall": "npm run skills",
+    "postinstall": "[ -n \"$CI\" ] || npm run skills",
     "dev": "vite",
     "check:images": "node scripts/check-images.mjs",
     "check:svg": "node scripts/check-svg-colors.mjs",
