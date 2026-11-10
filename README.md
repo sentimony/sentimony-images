@@ -109,7 +109,7 @@ Web development of sentimony-images (Digital Keeper) - a repo for storing conten
     </tr>
     <tr>
       <td><img src="https://cdn.simpleicons.org/githubactions" width="16" height="16"> <a href="https://github.com/features/actions">GitHub Actions</a></td>
-      <td>CI: typecheck, build, smoke tests</td>
+      <td>CI: typecheck, build, smoke tests; Auto Reviewer for PRs</td>
       <td>-</td>
     </tr>
     <tr>
