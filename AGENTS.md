@@ -119,6 +119,6 @@ Inline `// NNN slug (role)` comments in `artist-images.ts` mirror sentimony-nuxt
 - [ ] check-images: кешувати відповідь API у `.cache/` (gitignored) як офлайн-fallback замість читання export із сусіднього репо
 
 ## CI
-`.github/workflows/ci.yml` (push у main + PR): `npm ci` → typecheck → build → install chromium → `test:pages`. `timeout-minutes: 10`, concurrency скасовує застарілі рани.
+`.github/workflows/ci.yml` (push у будь-яку гілку + PR; push потрібен Auto Reviewer, бо gate приймає CI лише з `push`/`workflow_dispatch`): `npm ci` → typecheck → build → install chromium → `test:pages`. `timeout-minutes: 10`, concurrency скасовує застарілі рани.
 - `.github/workflows/auto-reviewer.yaml` (`Auto Reviewer`): викликає `sentimony/github-workflows/.github/workflows/auto-reviewer-shared.yaml@v0.0.5`; після `CI` чекає job `smoke`. Секрети `AUTO_REVIEWER_YNGWALD`, `CLAUDE_CODE_OAUTH_TOKEN`. Робоча тека `.auto-reviewer/` gitignored. `workflow_run` бере caller з default-гілки, тож до мержу PR-копію запускає лише `pull_request`.
 - `scripts/smoke-pages.mjs`: `ROUTES` — **третє** місце синку роутів (з `app/router.ts` + `SPA_ROUTES` у server.mts). Нова сторінка = додати шлях у всі три. Запускає vite напряму (не через npx), щоб kill не лишав zombie на порту.
