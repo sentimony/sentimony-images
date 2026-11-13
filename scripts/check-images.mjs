@@ -3,22 +3,27 @@
 // app/data/*.ts and reports what to add and where. Read-only: recommendations
 // only, always exits 0. Fixes are applied by scripts/fix-configs.mjs
 // (npm run fix:configs), which imports the shared logic from here.
-// Release data: site API -> fallback to the export in the sibling sentimony-nuxt repo.
+// Release data: catalog YAML in the sibling sentimony-nuxt repo -> fallback to the site API.
 
+import { spawnSync } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
+import { createInterface } from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const IMG_DIR = join(root, 'public/assets/img')
 export const DATA_DIR = join(root, 'app/data')
 
+// sentimony-db.yml is the catalog source of truth, so it wins over the API: the API
+// serves the last *deployed* catalog and lags behind unsynced local edits. (The JSON
+// export next to the YAML is a gitignored build artifact - never read it.)
+const CATALOG_PATH = resolve(root, '../sentimony-nuxt/server/data/sentimony-db.yml')
 const API_URL = 'https://sentimony.com/api/releases'
-const DB_FALLBACK = resolve(root, '../sentimony-nuxt/data/sentimony-db-export.json')
 
 // thumbs: config lists only *_th.jpg; _xl/_og siblings live next to them on disk
 export const PAGES = [
-  { file: 'release-images.ts', array: 'releaseImages', folder: 'releases', thumbs: true, chronology: 'releases' },
+  { file: 'release-images.ts', array: 'releaseImages', folder: 'releases', thumbs: true, chronology: 'releases', dates: 'releaseDates' },
   { file: 'artist-images.ts', array: 'artistImages', folder: 'artists', thumbs: true, chronology: 'artists' },
   { file: 'playlist-images.ts', array: 'playlistImages', folder: 'playlists', thumbs: true },
   { file: 'video-images.ts', array: 'videoImages', folder: 'videos', thumbs: true },
@@ -71,21 +76,37 @@ function parseConfigArray(filePath, arrayName) {
   return { startLine: start + 1, entries, headers }
 }
 
-// --- Release data: API -> local export -> nothing -----------------------------
+// `export const releaseDates: Record<string, string> = { 'slug': 'YYYY-MM-DD', ... }`
+function parseDateMap(filePath, mapName) {
+  const lines = readFileSync(filePath, 'utf8').split('\n')
+  const start = lines.findIndex((l) => l.includes(`const ${mapName}`))
+  if (start === -1) return null
+  const entries = []
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^\s*\}/.test(lines[i])) break
+    const m = lines[i].match(/^\s*'([^']+)':\s*'(\d{4}-\d{2}-\d{2})',?\s*$/)
+    if (m) entries.push({ slug: m[1], date: m[2], line: i + 1 })
+  }
+  return { startLine: start + 1, entries }
+}
 
-// Both the API (firebase mode) and the export may return an object instead of an array
+// --- Release data: local catalog -> API -> nothing -----------------------------
+
+// Both the catalog and the API (firebase mode) may hold an object instead of an array
 const asList = (v) => Array.isArray(v) ? v : Object.values(v ?? {})
 
 export async function loadReleaseData() {
   try {
-    // short timeout: this runs on dev server startup and the fallback is local and fast
+    // dynamic import: a missing `yaml` falls into the catch instead of breaking dev startup
+    const { parse } = await import('yaml')
+    const db = parse(readFileSync(CATALOG_PATH, 'utf8'))
+    return { source: 'локальний каталог sentimony-db.yml (sentimony-nuxt)', releases: asList(db.releases) }
+  } catch { /* no sibling repo checkout (CI) or no yaml - fall back to the API */ }
+  try {
+    // short timeout: this runs on dev server startup and must not stall the banner
     const res = await fetch(API_URL, { signal: AbortSignal.timeout(3_000) })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return { source: 'API', releases: asList(await res.json()) }
-  } catch { /* offline or API down — try the local export */ }
-  try {
-    const db = JSON.parse(readFileSync(DB_FALLBACK, 'utf8'))
-    return { source: 'локальний export (sentimony-nuxt)', releases: asList(db.releases) }
+    return { source: 'API (задеплоєний каталог)', releases: asList(await res.json()) }
   } catch {
     return null
   }
@@ -112,7 +133,7 @@ const day = (iso) => iso.slice(0, 10)
 const artistSlugOf = (file) => file.replace(/-\d+_th\.jpg$/, '')
 
 // Curated exception: pulled out of release-date order on purpose (e.g. the
-// label founder pinned first) — chronology checks should ignore these.
+// label founder pinned first) - chronology checks should ignore these.
 const CHRONOLOGY_EXEMPT = new Set(['irukanji'])
 
 // Insertion anchor: the last config entry dated <= the new date (self excluded for moves)
@@ -138,13 +159,18 @@ function releaseLine(file, info) {
   return `  '${file}', // ${day(info.date)}${info.comingSoon ? ' UNRELEASED' : ''}`
 }
 
+// releaseDates entry: plain date, no UNRELEASED label (the map is date-only)
+function dateMapLine(slug, info) {
+  return `  '${slug}': '${day(info.date)}',`
+}
+
 // --- Config analysis: findings with an optional auto-fix ----------------------
 // finding: { msg, fix?: {kind:'insert'|'move', ...}, done?: action label for the fixer }
 
-export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
+export function analyzePage({ file, array, folder, thumbs, chronology, dates }, idx) {
   const parsed = parseConfigArray(join(DATA_DIR, file), array)
   if (!parsed) {
-    return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} — перевірте scripts/check-images.mjs` }] }
+    return { file, findings: [{ msg: `${red('не знайдено масив')} ${array} - перевірте scripts/check-images.mjs` }] }
   }
   const { startLine, entries, headers } = parsed
 
@@ -169,16 +195,16 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
         const anchor = artistGroupAnchor(headers, first.release)
         if (anchor) {
           findings.push({
-            msg: `${yellow('відсутній у конфігу:')} '${f}' — ${ctx}, вставте у групу '${first.release}' (рядок ${anchor})`,
+            msg: `${yellow('відсутній у конфігу:')} '${f}' - ${ctx}, вставте у групу '${first.release}' (рядок ${anchor})`,
             fix: { kind: 'insert', afterLine: anchor, text: `  '${f}',` },
             done: `додано '${f}' у групу '${first.release}'`,
           })
         } else {
-          // the release has no group header yet — creating one is curation work
-          findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — ${ctx}, групи '// ${day(first.date)} ${first.release}' ще немає, додайте її вручну` })
+          // the release has no group header yet - creating one is curation work
+          findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - ${ctx}, групи '// ${day(first.date)} ${first.release}' ще немає, додайте її вручну` })
         }
       } else {
-        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — немає в даних релізів, позицію визначте вручну` })
+        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - немає в даних релізів, позицію визначте вручну` })
       }
     } else if (chronology === 'releases') {
       const info = idx?.releaseInfo.get(f.replace('_th.jpg', ''))
@@ -186,12 +212,12 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
         const pos = suggestPosition(entries, dateOf, info.date)
         const where = pos ? `після '${pos.value}' (рядок ${pos.line})` : 'на початок масиву'
         findings.push({
-          msg: `${yellow('відсутній у конфігу:')} '${f}' — ${day(info.date)}, вставте ${where}`,
+          msg: `${yellow('відсутній у конфігу:')} '${f}' - ${day(info.date)}, вставте ${where}`,
           fix: { kind: 'insert', afterLine: pos ? pos.line : startLine, text: releaseLine(f, info) },
           done: `додано '${f}' ${where}`,
         })
       } else {
-        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' — немає в даних релізів, позицію визначте вручну` })
+        findings.push({ msg: `${yellow('відсутній у конфігу:')} '${f}' - немає в даних релізів, позицію визначте вручну` })
       }
     } else {
       // non-chronological configs keep alphabetical order
@@ -205,19 +231,19 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
     }
   }
 
-  // 2. Config entry without a file on disk — recommendation only (no auto-fix:
+  // 2. Config entry without a file on disk - recommendation only (no auto-fix:
   //    the file may have been renamed, deleting a curated entry is irreversible)
   for (const e of entries.filter((e) => !fileSet.has(e.value))) {
-    findings.push({ msg: `${red('файла немає на диску:')} '${e.value}' (рядок ${e.line}) — видаліть запис або поверніть файл` })
+    findings.push({ msg: `${red('файла немає на диску:')} '${e.value}' (рядок ${e.line}) - видаліть запис або поверніть файл` })
   }
 
-  // 3. Duplicate config entries — recommendation only (the copies may carry
+  // 3. Duplicate config entries - recommendation only (the copies may carry
   //    different inline comments, picking the survivor is a manual call)
   const seen = new Map()
   for (const e of entries) {
     const first = seen.get(e.value)
     if (first) {
-      findings.push({ msg: `${yellow('дубль у конфігу:')} '${e.value}' (рядок ${e.line}, перший запис на рядку ${first.line}) — приберіть зайвий` })
+      findings.push({ msg: `${yellow('дубль у конфігу:')} '${e.value}' (рядок ${e.line}, перший запис на рядку ${first.line}) - приберіть зайвий` })
     } else {
       seen.set(e.value, e)
     }
@@ -231,15 +257,15 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
         findings.push({ msg: `${red('немає пари _xl:')} '${xl}' для '${e.value}' (рядок ${e.line})` })
       }
     }
-    // 5. Orphan _xl on disk without a _th pair — invisible to the page entirely
+    // 5. Orphan _xl on disk without a _th pair - invisible to the page entirely
     for (const f of allFiles.filter((f) => f.endsWith('_xl.jpg'))) {
       if (!fileSet.has(f.replace('_xl.jpg', '_th.jpg'))) {
-        findings.push({ msg: `${yellow('є _xl без _th:')} '${f}' — додайте '${f.replace('_xl.jpg', '_th.jpg')}' або приберіть файл` })
+        findings.push({ msg: `${yellow('є _xl без _th:')} '${f}' - додайте '${f.replace('_xl.jpg', '_th.jpg')}' або приберіть файл` })
       }
     }
   }
 
-  // 6. Releases: the date comment is derived data — flag entries whose comment
+  // 6. Releases: the date comment is derived data - flag entries whose comment
   //    drifted from the API (wrong date or a missing/stale UNRELEASED label)
   if (chronology === 'releases' && idx) {
     for (const e of entries) {
@@ -249,7 +275,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
       const expectedComment = expected.slice(expected.indexOf('//'))
       if (e.comment !== expectedComment) {
         findings.push({
-          msg: `${yellow('застарілий коментар:')} '${e.value}' (рядок ${e.line}) — '${e.comment || 'без коментаря'}' має бути '${expectedComment}'`,
+          msg: `${yellow('застарілий коментар:')} '${e.value}' (рядок ${e.line}) - '${e.comment || 'без коментаря'}' має бути '${expectedComment}'`,
           fix: { kind: 'update', line: e.line, text: expected },
           done: `оновлено коментар '${e.value}' -> '${expectedComment}'`,
         })
@@ -265,7 +291,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
       const d = dateOf(e.value)
       if (!d) {
         if (chronology === 'releases') {
-          findings.push({ msg: `${yellow('немає в даних релізів:')} '${e.value}' (рядок ${e.line}) — одрук у назві?` })
+          findings.push({ msg: `${yellow('немає в даних релізів:')} '${e.value}' (рядок ${e.line}) - одрук у назві?` })
         }
         continue // artists without releases (astrocat etc.) are skipped
       }
@@ -276,7 +302,7 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
         if (chronology === 'artists') {
           const first = idx.artistFirst.get(artistSlugOf(e.value))
           const anchor = artistGroupAnchor(headers, first.release)
-          // anchor === e.line would loop forever (mis-ordered headers) — keep it manual
+          // anchor === e.line would loop forever (mis-ordered headers) - keep it manual
           if (anchor && anchor !== e.line) {
             // keep the inline comment (role labels etc.)
             fix = { kind: 'move', fromLine: e.line, afterLine: anchor, text: `  '${e.value}',${e.comment ? ` ${e.comment}` : ''}` }
@@ -294,11 +320,55 @@ export function analyzePage({ file, array, folder, thumbs, chronology }, idx) {
     }
   }
 
+  // 8. Derived slug -> date map (releaseDates): every array entry needs a key with
+  //    the catalog date. Expected values come from the catalog, not from the array
+  //    comment, so a stale comment and a stale map never disagree on the target.
+  if (dates && chronology === 'releases' && idx) {
+    const map = parseDateMap(join(DATA_DIR, file), dates)
+    if (!map) {
+      findings.push({ msg: `${red('не знайдено мапу')} ${dates} - перевірте scripts/check-images.mjs` })
+    } else {
+      const byslug = new Map(map.entries.map((m) => [m.slug, m]))
+      let prev = null // last map line seen, to anchor an insert in array order
+      for (const e of entries) {
+        const slug = e.value.replace('_th.jpg', '')
+        const info = idx.releaseInfo.get(slug)
+        if (!info) continue
+        const found = byslug.get(slug)
+        const text = dateMapLine(slug, info)
+        if (!found) {
+          findings.push({
+            msg: `${yellow(`немає в ${dates}:`)} '${slug}' - має бути '${day(info.date)}'`,
+            fix: { kind: 'insert', afterLine: prev ? prev.line : map.startLine, text },
+            done: `додано '${slug}' у ${dates} -> '${day(info.date)}'`,
+          })
+        } else {
+          if (found.date !== day(info.date)) {
+            findings.push({
+              msg: `${yellow(`застаріла дата в ${dates}:`)} '${slug}' (рядок ${found.line}) - '${found.date}' має бути '${day(info.date)}'`,
+              fix: { kind: 'update', line: found.line, text },
+              done: `оновлено ${dates}: '${slug}' -> '${day(info.date)}'`,
+            })
+          }
+          prev = found
+        }
+      }
+      // a key without an array entry is curator data, not drift - report only
+      const slugs = new Set(entries.map((e) => e.value.replace('_th.jpg', '')))
+      for (const m of map.entries) {
+        if (!slugs.has(m.slug)) {
+          findings.push({ msg: `${yellow(`зайвий запис у ${dates}:`)} '${m.slug}' (рядок ${m.line}) - немає в ${array}` })
+        }
+      }
+    }
+  }
+
   return { file, findings }
 }
 
 // --- Report --------------------------------------------------------------------
 
+// Returns whether any finding can be auto-fixed, so the caller can offer fix-configs
 export function printReport(idx, data, { hint }) {
   const report = []
   let fixable = false
@@ -310,18 +380,49 @@ export function printReport(idx, data, { hint }) {
     }
   }
   if (!data) {
-    report.push(dim('Дані релізів недоступні (нема інтернету і локального export) — перевірки хронології пропущено.'))
+    report.push(dim('Дані релізів недоступні (нема інтернету і локального export) - перевірки хронології пропущено.'))
   }
   if (report.length) {
     console.log(`\n${bold('check-images')} ${dim(data ? `(дані: ${data.source})` : '')}\n`)
     console.log(report.join('\n\n') + '\n')
     if (hint && fixable) console.log(`Або запустіть ${bold('npm run fix:configs')} для авто-виправлення\n`)
   }
+  return fixable
 }
 
-// Run only as an entry point — fix-configs.mjs imports from here without side effects
+// --- Prompt (shared with fix-configs.mjs) -------------------------------------
+
+export async function confirm(question, { assumeYes = false } = {}) {
+  if (assumeYes) return true
+  if (!process.stdin.isTTY) {
+    console.log(dim('Не інтерактивний термінал - пропущено. Запустіть з --yes для застосування.'))
+    return false
+  }
+  const rl = createInterface({ input: process.stdin, output: process.stdout })
+  const answer = (await rl.question(`${question} [y/N] `)).trim().toLowerCase()
+  rl.close()
+  return answer === 'y' || answer === 'yes'
+}
+
+// Run only as an entry point - fix-configs.mjs imports from here without side effects
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  // --no-prompt: the vite dev plugin runs us with vite owning stdin, so a readline
+  // here would fight vite's own one; it offers the `f` shortcut instead
+  const noPrompt = process.argv.includes('--no-prompt')
   loadReleaseData()
-    .then((data) => printReport(data ? buildIndexes(data.releases) : null, data, { hint: true }))
+    .then(async (data) => {
+      // no prompt without a TTY (CI, piped output) - keep the textual hint there
+      const interactive = !noPrompt && process.stdin.isTTY
+      const fixable = printReport(data ? buildIndexes(data.releases) : null, data, { hint: !interactive && !noPrompt })
+      if (!fixable) return
+      if (noPrompt) {
+        console.log(`Натисніть ${bold('f + Enter')} для авто-виправлення (${bold('npm run fix:configs')})\n`)
+        return
+      }
+      if (!interactive || !(await confirm('Застосувати авто-виправлення?'))) return
+      const fixConfigs = fileURLToPath(new URL('./fix-configs.mjs', import.meta.url))
+      const res = spawnSync(process.execPath, [fixConfigs, '--yes'], { stdio: 'inherit' })
+      if (res.status) process.exitCode = res.status
+    })
     .catch((err) => console.error(dim(`check-images: ${err.message}`)))
 }
