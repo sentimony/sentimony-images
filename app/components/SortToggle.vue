@@ -30,7 +30,7 @@ const ICONS: Record<Dimension, Component> = {
 interface DimEntry {
   dim: Dimension
   label: string
-  // The two directions, keyed by the arrow in each option's label — the arrow,
+  // The two directions, keyed by the arrow in each option's label - the arrow,
   // not asc/desc, is this project's direction indicator (date/size ↓ = desc,
   // alpha ↓ = asc).
   down?: T
