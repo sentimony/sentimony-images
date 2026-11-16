@@ -43,8 +43,8 @@ npx skills add https://github.com/obra/superpowers -s \
 # SENTIMONY SKILLS
 npx skills add https://github.com/sentimony/skills -s \
   scope-triage \
-  plan-crafting \
-  web-debug \
+  plan-craft \
+  playwright-debug \
   vitest \
   typescript \
   echarts \
